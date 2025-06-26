@@ -1,0 +1,331 @@
+# Linux Hardening Tool - Enterprise Configuration Profile
+# This configuration implements strict security controls suitable for high-security environments
+
+# Module Configuration
+modules:
+  # User and Group Security
+  user_security:
+    enabled: true
+    config:
+      password_max_days: 90
+      password_min_days: 7
+      password_warn_age: 14
+      umask: "027"
+      disable_system_accounts: true
+      
+  # SSH Server Hardening
+  ssh:
+    enabled: true
+    config:
+      permit_root_login: "no"
+      password_authentication: "no"
+      permit_empty_passwords: "no"
+      x11_forwarding: "no"
+      max_auth_tries: 3
+      client_alive_interval: 300
+      client_alive_count_max: 0
+      # Allowed users/groups (comma-separated)
+      allowed_users: ""
+      allowed_groups: "sshusers"
+      # Secure algorithms
+      ciphers: "aes128-ctr,aes192-ctr,aes256-ctr"
+      macs: "hmac-sha2-256,hmac-sha2-512"
+      kex_algorithms: "curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha256"
+      
+  # Kernel Security Parameters
+  kernel:
+    enabled: true
+    config:
+      # Network security
+      net.ipv4.ip_forward: 0
+      net.ipv4.conf.all.send_redirects: 0
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.accept_source_route: 0
+      net.ipv4.conf.all.log_martians: 1
+      net.ipv4.tcp_syncookies: 1
+      net.ipv4.icmp_echo_ignore_broadcasts: 1
+      # Disable IPv6 if not needed
+      net.ipv6.conf.all.disable_ipv6: 1
+      # Kernel hardening
+      kernel.randomize_va_space: 2
+      kernel.kptr_restrict: 2
+      kernel.yama.ptrace_scope: 1
+      kernel.sysrq: 0
+      fs.suid_dumpable: 0
+      
+  # File Permissions
+  file_permissions:
+    enabled: true
+    config:
+      fix_permissions: true
+      remove_world_writable: true
+      fix_unowned_files: true
+      # Custom permission rules
+      custom_permissions:
+        - path: "/etc/passwd"
+          mode: "0644"
+          owner: "root"
+          group: "root"
+        - path: "/etc/shadow"
+          mode: "0640"
+          owner: "root"
+          group: "shadow"
+        - path: "/etc/ssh/sshd_config"
+          mode: "0600"
+          owner: "root"
+          group: "root"
+          
+  # Firewall Configuration
+  firewall:
+    enabled: true
+    config:
+      # Firewall type: auto, firewalld, ufw, iptables
+      type: "auto"
+      default_input_policy: "drop"
+      default_forward_policy: "drop"
+      default_output_policy: "accept"
+      # Allowed incoming ports
+      allowed_tcp_ports:
+        - 22    # SSH
+        - 443   # HTTPS
+      allowed_udp_ports: []
+      # Custom rules (iptables format)
+      custom_rules:
+        - "-A INPUT -p icmp --icmp-type echo-request -j ACCEPT"
+        - "-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT"
+      # Firewalld specific
+      firewalld_zone: "drop"
+      # UFW specific
+      ufw_logging: "on"
+      
+  # Service Management
+  services:
+    enabled: true
+    config:
+      # Services to disable
+      disable_services:
+        - telnet
+        - rsh
+        - rlogin
+        - tftp
+        - vsftpd
+        - finger
+        - talk
+        - ntalk
+        - cups
+        - avahi-daemon
+        - bluetooth
+        - iscsid
+        - rpcbind
+        - nfs
+        - snmpd
+      # Services to ensure are running
+      enable_services:
+        - auditd
+        - rsyslog
+        - crond
+      # Packages to remove (if safe)
+      remove_packages:
+        - telnet
+        - rsh-client
+        - rsh-server
+        - talk
+        - talkd
+      # Enable automatic updates
+      auto_updates: true
+      
+  # Audit Configuration
+  auditd:
+    enabled: true
+    config:
+      # Audit rules
+      rules:
+        # Authentication
+        - "-w /etc/passwd -p wa -k passwd_changes"
+        - "-w /etc/shadow -p wa -k shadow_changes"
+        - "-w /etc/group -p wa -k group_changes"
+        - "-w /etc/gshadow -p wa -k gshadow_changes"
+        # Sudo
+        - "-w /etc/sudoers -p wa -k sudoers_changes"
+        - "-w /etc/sudoers.d/ -p wa -k sudoers_changes"
+        # SSH
+        - "-w /etc/ssh/sshd_config -p wa -k sshd_config"
+        # Kernel modules
+        - "-w /sbin/insmod -p x -k modules"
+        - "-w /sbin/rmmod -p x -k modules"
+        - "-w /sbin/modprobe -p x -k modules"
+      # Log file configuration
+      max_log_file: 50
+      num_logs: 10
+      space_left_action: "SYSLOG"
+      admin_space_left_action: "SUSPEND"
+      
+  # SELinux/AppArmor
+  selinux:
+    enabled: true
+    config:
+      # Mode: enforcing, permissive, disabled
+      mode: "enforcing"
+      # Policy: targeted, minimum, mls
+      policy: "targeted"
+      # AppArmor profiles to enforce
+      apparmor_profiles:
+        - "/usr/sbin/sshd"
+        - "/usr/sbin/httpd"
+
+# Global Options
+options:
+  # Create backup before making changes
+  create_backup: true
+  
+  # Interactive mode - prompt before applying changes
+  interactive: true
+  
+  # Report format: json, yaml, text
+  report_format: "json"
+  
+  # Report verbosity: summary, detailed, debug
+  report_verbosity: "detailed"
+  
+  # Log level: INFO, WARNING, ERROR, DEBUG
+  log_level: "INFO"
+  
+  # Skip specific checks (use with caution)
+  skip_checks: []
+  
+  # Custom backup location (default: /var/backups/linux-hardening-tool)
+  backup_dir: "/var/backups/linux-hardening-tool"
+  
+  # Custom log location (default: /var/log/linux-hardening-tool)
+  log_dir: "/var/log/linux-hardening-tool"
+  
+  # Notification settings
+  notifications:
+    enabled: false
+    email: "security@example.com"
+    webhook: "https://example.com/security-webhook"
+    
+  # Integration with external tools
+  integrations:
+    # Send results to SIEM
+    siem:
+      enabled: false
+      type: "splunk"  # splunk, elastic, qradar
+      endpoint: "https://siem.example.com:8088"
+      token: "your-token-here"
+    
+    # Configuration management
+    config_management:
+      enabled: false
+      type: "ansible"  # ansible, puppet, chef
+      playbook: "/etc/ansible/hardening-report.yml"
+
+# Compliance Profiles
+compliance:
+  # Enable specific compliance frameworks
+  frameworks:
+    cis:
+      enabled: true
+      level: 2  # 1 or 2
+    
+    stig:
+      enabled: true
+      categories:
+        - "CAT I"
+        - "CAT II"
+        - "CAT III"
+    
+    nist_800_53:
+      enabled: true
+      controls:
+        - "AC"  # Access Control
+        - "AU"  # Audit and Accountability
+        - "CM"  # Configuration Management
+        - "IA"  # Identification and Authentication
+        - "SC"  # System and Communications Protection
+    
+    pci_dss:
+      enabled: false
+      version: "4.0"
+    
+    hipaa:
+      enabled: false
+
+# Environment-specific settings
+environments:
+  production:
+    # Stricter settings for production
+    modules:
+      ssh:
+        config:
+          max_auth_tries: 2
+      kernel:
+        config:
+          kernel.kptr_restrict: 2
+      firewall:
+        config:
+          default_output_policy: "drop"
+    options:
+      interactive: false
+      
+  development:
+    # More relaxed settings for development
+    modules:
+      ssh:
+        config:
+          password_authentication: "yes"
+      services:
+        config:
+          remove_packages: []
+    options:
+      create_backup: false
+      
+  staging:
+    # Balanced settings for staging
+    modules:
+      kernel:
+        config:
+          kernel.kptr_restrict: 1
+    options:
+      interactive: true
+
+# Custom scripts to run
+hooks:
+  # Scripts to run before hardening
+  pre_hardening:
+    - "/usr/local/bin/backup-system.sh"
+    - "/usr/local/bin/notify-team.sh start"
+  
+  # Scripts to run after hardening
+  post_hardening:
+    - "/usr/local/bin/verify-services.sh"
+    - "/usr/local/bin/notify-team.sh complete"
+  
+  # Scripts to run on rollback
+  post_rollback:
+    - "/usr/local/bin/notify-team.sh rollback"
+
+# Exclusions and exceptions
+exclusions:
+  # Paths to exclude from file permission checks
+  paths:
+    - "/var/www"
+    - "/opt/custom-app"
+  
+  # Services to never disable
+  services:
+    - "oracle"
+    - "mysql"
+    - "postgresql"
+  
+  # Users to never modify
+  users:
+    - "oracle"
+    - "mysql"
+    - "postgres"
+  
+  # Ports to always keep open
+  ports:
+    - 1521  # Oracle
+    - 3306  # MySQL
+    - 5432  # PostgreSQL
