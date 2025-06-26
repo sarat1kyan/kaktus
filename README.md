@@ -44,12 +44,16 @@ An enterprise-grade automated security hardening tool for Red Hat and Debian-bas
 
 ### Quick Install
 
+Go for QuickInstallGuide.md
+
+### Quick Run
+
 ```bash
 # Clone or download the tool
 git clone https://github.com/sarat1kyan/kaktus.git
 chmod +x kaktus.py
 
-# Install dependencies (if any)
+# Quick Run dependencies (if any)
 pip3 install pyyaml  # Only if using YAML configs
 ```
 
@@ -379,7 +383,7 @@ For issues, questions, or contributions:
 
 ## Changelog
 
-### Version 1.0.0
+### Version 2.1.0 Stable
 - Initial release
 - Support for RHEL/CentOS/Debian/Ubuntu
 - Eight security modules
