@@ -3,7 +3,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Security](https://img.shields.io/badge/security-hardening-red.svg)](https://github.com/sarat1kyan/kaktus)
-[![Compliance](https://img.shields.io/badge/compliance-CIS%20%7C%20ISO27001%20%7C%20NIST%20%7C%20PCI--DSS-green.svg)](https://github.com/sarat1kyan/kaktus)
+[![Compliance](https://img.shields.io/badge/compliance-CIS%20%7C%20ISO27001%20%7C%20NIST%20%7C%20STIG%20%7C%20PCI--DSS-green.svg)](https://github.com/sarat1kyan/kaktus)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/sarat1kyan/kaktus)
 [![Coverage](https://img.shields.io/badge/coverage-95%25-green.svg)](https://github.com/sarat1kyan/kaktus)
 [![Vulnerabilities](https://img.shields.io/badge/vulnerabilities-0-brightgreen.svg)](https://github.com/sarat1kyan/kaktus)
