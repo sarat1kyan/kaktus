@@ -991,11 +991,11 @@
                     <div class="stat-label">Security Modules</div>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number" data-target="5">0</span>
+                    <span class="stat-number" data-target="23">0</span>
                     <div class="stat-label">Linux Distributions</div>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number" data-target="100">0</span>
+                    <span class="stat-number" data-target="130">0</span>
                     <div class="stat-label">Security Checks</div>
                 </div>
                 <div class="stat-card">
@@ -1065,33 +1065,593 @@
         </div>
     </section>
 
-    <!-- Interactive Demo Section -->
-    <section class="section" id="demo" style="background: rgba(10, 20, 33, 0.3);">
-        <div class="container">
-            <div class="section-title">
-                <h2>Interactive Demo</h2>
-            </div>
-            
-            <div class="demo-terminal">
-                <div class="demo-controls">
-                    <button class="demo-btn active" data-demo="audit">Security Audit</button>
-                    <button class="demo-btn" data-demo="hardening">Apply Hardening</button>
-                    <button class="demo-btn" data-demo="rollback">Rollback Changes</button>
+<!-- Interactive Demo Section -->
+<section class="section" id="demo" style="background: rgba(10, 20, 33, 0.3);">
+    <div class="container">
+        <div class="section-title">
+            <h2>Interactive Demo</h2>
+            <p>Experience Kaktus in action with this live terminal simulator</p>
+        </div>
+        
+        <div class="demo-terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="terminal-dot dot-red" id="close-dot" title="Close terminal"></div>
+                    <div class="terminal-dot dot-yellow" id="minimize-dot" title="Minimize"></div>
+                    <div class="terminal-dot dot-green" id="maximize-dot" title="Maximize"></div>
                 </div>
-                <div class="demo-content" id="demoContent">
-                    <div class="terminal-header">
-                        <div class="terminal-dots">
-                            <div class="terminal-dot dot-red"></div>
-                            <div class="terminal-dot dot-yellow"></div>
-                            <div class="terminal-dot dot-green"></div>
-                        </div>
-                        <div class="terminal-title">root@production-server:~</div>
-                    </div>
-                    <div id="demoOutput"></div>
+                <div class="terminal-title">kaktus@demo:~</div>
+            </div>
+            <div class="terminal-content" id="terminal-output">
+                <div class="welcome-message">
+                    <p>Kaktus Linux Hardening Tool v2.1.0 - Interactive Demo</p>
+                    <p>Type <span class="command">help</span> to see available commands or click the buttons below</p>
+                    <p>Try: <span class="command">kaktus --audit</span> or <span class="command">kaktus --dry-run</span></p>
+                    <br>
+                </div>
+                <div class="terminal-line">
+                    <span class="prompt">$</span>
+                    <span class="command" contenteditable="true" id="command-input" spellcheck="false"></span>
+                    <span class="cursor" id="terminal-cursor">|</span>
                 </div>
             </div>
         </div>
-    </section>
+        
+        <div class="demo-commands">
+            <div class="command-categories">
+                <div class="category">
+                    <h3>Audit & Hardening</h3>
+                    <div class="command-buttons">
+                        <button class="demo-btn" data-command="kaktus --audit" title="Run security audit">
+                            <i class="fas fa-search"></i> Audit System
+                        </button>
+                        <button class="demo-btn" data-command="kaktus --dry-run" title="Preview changes">
+                            <i class="fas fa-eye"></i> Dry Run
+                        </button>
+                        <button class="demo-btn" data-command="kaktus" title="Apply hardening">
+                            <i class="fas fa-shield-alt"></i> Harden System
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <h3>Module Operations</h3>
+                    <div class="command-buttons">
+                        <button class="demo-btn" data-command="kaktus --modules ssh,firewall" title="Harden SSH and firewall">
+                            <i class="fas fa-lock"></i> Secure SSH & FW
+                        </button>
+                        <button class="demo-btn" data-command="kaktus --modules kernel,services" title="Harden kernel and services">
+                            <i class="fas fa-cog"></i> Kernel & Services
+                        </button>
+                        <button class="demo-btn" data-command="kaktus --list-backups" title="List available backups">
+                            <i class="fas fa-history"></i> List Backups
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <h3>Utilities</h3>
+                    <div class="command-buttons">
+                        <button class="demo-btn" data-command="clear" title="Clear terminal">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
+                        <button class="demo-btn" data-command="help" title="Show help">
+                            <i class="fas fa-question-circle"></i> Help
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-tips">
+                <div class="tip-card">
+                    <i class="fas fa-lightbulb"></i>
+                    <p>Press <kbd>Tab</kbd> to autocomplete commands</p>
+                </div>
+                <div class="tip-card">
+                    <i class="fas fa-history"></i>
+                    <p>Use <kbd>↑</kbd> and <kbd>↓</kbd> to navigate command history</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Enhanced Demo Terminal Styles */
+    .demo-terminal {
+        background: var(--terminal-bg);
+        border-radius: 12px;
+        padding: 0;
+        margin: 3rem auto;
+        max-width: 900px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(42, 157, 143, 0.3);
+        height: 400px;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .demo-terminal.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    #terminal-output {
+        min-height: calc(100% - 40px);
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+        padding-bottom: 0;
+    }
+    
+    #command-input {
+        outline: none;
+        caret-color: var(--accent);
+        min-width: 200px;
+        background: transparent;
+        border: none;
+        color: var(--light);
+        font-family: 'Courier New', monospace;
+        flex-grow: 1;
+    }
+    
+    .terminal-line {
+        display: flex;
+        margin-bottom: 5px;
+        align-items: center;
+    }
+    
+    #terminal-cursor {
+        animation: blink 1s infinite;
+        color: var(--accent);
+        margin-left: 2px;
+    }
+    
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+    
+    .command-response {
+        margin: 10px 0;
+        white-space: pre-wrap;
+        font-family: 'Courier New', monospace;
+        line-height: 1.6;
+    }
+    
+    .command-response .success {
+        color: var(--success);
+    }
+    
+    .command-response .warning {
+        color: var(--warning);
+    }
+    
+    .command-response .info {
+        color: var(--info);
+    }
+    
+    .command-response .error {
+        color: #ff5f56;
+    }
+    
+    .welcome-message {
+        color: var(--light);
+        margin-bottom: 1rem;
+    }
+    
+    .welcome-message .command {
+        color: var(--accent);
+    }
+    
+    /* Demo Commands Section */
+    .demo-commands {
+        margin-top: 2rem;
+    }
+    
+    .command-categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .command-categories h3 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .command-categories h3 i {
+        font-size: 0.9rem;
+    }
+    
+    .command-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .demo-btn {
+        padding: 0.6rem 1.2rem;
+        background: var(--glass);
+        border: 1px solid var(--primary);
+        border-radius: 6px;
+        color: var(--primary);
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .demo-btn:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+    }
+    
+    .demo-btn i {
+        font-size: 0.8rem;
+    }
+    
+    /* Demo Tips */
+    .demo-tips {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .tip-card {
+        background: rgba(42, 157, 143, 0.1);
+        border: 1px solid rgba(42, 157, 143, 0.3);
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.9rem;
+    }
+    
+    .tip-card i {
+        color: var(--accent);
+        font-size: 1.2rem;
+    }
+    
+    .tip-card kbd {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.9rem;
+    }
+</style>
+
+<script>
+    // Enhanced Terminal Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const terminalOutput = document.getElementById('terminal-output');
+        const commandInput = document.getElementById('command-input');
+        const commandButtons = document.querySelectorAll('.demo-btn[data-command]');
+        const cursor = document.getElementById('terminal-cursor');
+        let commandHistory = [];
+        let historyIndex = -1;
+        
+        // Focus the command input with blinking cursor
+        function focusInput() {
+            commandInput.focus();
+            cursor.style.animation = 'blink 1s infinite';
+        }
+        
+        focusInput();
+        
+        // Terminal dot buttons
+        document.getElementById('close-dot').addEventListener('click', () => {
+            terminalOutput.innerHTML = '<div class="welcome-message"><p class="error">Session terminated. Refresh page to restart.</p></div>';
+            commandInput.style.display = 'none';
+            cursor.style.display = 'none';
+        });
+        
+        document.getElementById('minimize-dot').addEventListener('click', () => {
+            terminalOutput.style.display = terminalOutput.style.display === 'none' ? 'flex' : 'none';
+        });
+        
+        document.getElementById('maximize-dot').addEventListener('click', () => {
+            const terminal = document.querySelector('.demo-terminal');
+            terminal.classList.toggle('fullscreen');
+            
+            if (terminal.classList.contains('fullscreen')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+        
+        // Command execution
+        commandInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const command = commandInput.textContent.trim();
+                if (command) {
+                    commandHistory.unshift(command);
+                    historyIndex = -1;
+                    processCommand(command);
+                }
+                commandInput.textContent = '';
+                focusInput();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    commandInput.textContent = commandHistory[historyIndex];
+                    placeCaretAtEnd(commandInput);
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    commandInput.textContent = commandHistory[historyIndex];
+                    placeCaretAtEnd(commandInput);
+                } else {
+                    historyIndex = -1;
+                    commandInput.textContent = '';
+                }
+            } else if (e.key === 'Tab') {
+                e.preventDefault();
+                const partial = commandInput.textContent.trim();
+                const matches = ['kaktus', 'clear', 'help'].filter(cmd => 
+                    cmd.startsWith(partial.toLowerCase())
+                );
+                
+                if (matches.length === 1) {
+                    commandInput.textContent = matches[0];
+                    placeCaretAtEnd(commandInput);
+                }
+            }
+        });
+        
+        function placeCaretAtEnd(el) {
+            el.focus();
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        
+        // Command buttons
+        commandButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const command = this.getAttribute('data-command');
+                commandInput.textContent = command;
+                processCommand(command);
+                commandInput.textContent = '';
+                focusInput();
+            });
+        });
+        
+        // Command processor
+        function processCommand(command) {
+            // Add the command to output
+            const commandLine = document.createElement('div');
+            commandLine.className = 'terminal-line';
+            commandLine.innerHTML = `<span class="prompt">$</span> <span class="command">${command}</span>`;
+            terminalOutput.insertBefore(commandLine, commandInput.parentNode);
+            
+            // Process command
+            let response = '';
+            let responseClass = '';
+            
+            switch(command.split(' ')[0]) {
+                case 'kaktus':
+                case './kaktus':
+                    if (command.includes('--audit') || command.includes('--audit-only')) {
+                        response = auditResponse();
+                        responseClass = 'info';
+                    } else if (command.includes('--dry-run')) {
+                        response = dryRunResponse();
+                        responseClass = 'warning';
+                    } else if (command.includes('--modules')) {
+                        response = modulesResponse(command);
+                        responseClass = 'success';
+                    } else if (command.includes('--list-backups')) {
+                        response = listBackupsResponse();
+                        responseClass = 'info';
+                    } else if (command === 'kaktus') {
+                        response = hardeningResponse();
+                        responseClass = 'success';
+                    } else {
+                        response = `Kaktus Linux Hardening Tool v2.1.0\nUsage: kaktus [options]\n\nOptions:\n  --audit, --audit-only  Run security audit only\n  --dry-run             Show what would be changed\n  --modules MODULES     Comma-separated list of modules\n  --list-backups        List available backups\n\nTry 'kaktus --help' for more information.`;
+                        responseClass = 'info';
+                    }
+                    break;
+                    
+                case 'clear':
+                    terminalOutput.innerHTML = '<div class="welcome-message"><p>Kaktus Linux Hardening Tool v2.1.0 - Interactive Demo</p><p>Type <span class="command">help</span> to see available commands or click the buttons below</p><p>Try: <span class="command">kaktus --audit</span> or <span class="command">kaktus --dry-run</span></p><br></div>';
+                    const newInputLine = document.createElement('div');
+                    newInputLine.className = 'terminal-line';
+                    newInputLine.innerHTML = `<span class="prompt">$</span> <span class="command" contenteditable="true" id="command-input" spellcheck="false"></span><span class="cursor" id="terminal-cursor">|</span>`;
+                    terminalOutput.appendChild(newInputLine);
+                    commandInput = document.getElementById('command-input');
+                    cursor = document.getElementById('terminal-cursor');
+                    focusInput();
+                    return;
+                    
+                case 'help':
+                    response = `Available commands:\n\nkaktus --audit       - Run security audit\nkaktus --dry-run     - Show what would be changed\nkaktus --modules MODULES - Harden specific components\nkaktus --list-backups - List available backups\nclear                - Clear the terminal\nhelp                 - Show this help`;
+                    responseClass = 'info';
+                    break;
+                    
+                default:
+                    response = `kaktus: command not found: ${command}\nType 'help' for available commands`;
+                    responseClass = 'error';
+            }
+            
+            // Add response to output
+            const responseDiv = document.createElement('div');
+            responseDiv.className = `command-response ${responseClass}`;
+            responseDiv.textContent = response;
+            terminalOutput.insertBefore(responseDiv, commandInput.parentNode);
+            
+            // Scroll to bottom
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+        
+        // Demo responses
+        function auditResponse() {
+            return `[INFO] Starting Kaktus security audit (v2.1.0)
+[SCAN] Checking user security configuration...
+[WARN] Found 3 users with UID 0 (root, admin, backup)
+[WARN] Password aging not set for 2 users
+[SCAN] Analyzing SSH configuration...
+[WARN] Root SSH login enabled (PermitRootLogin yes)
+[WARN] SSH protocol 1 enabled
+[SCAN] Reviewing firewall rules...
+[WARN] Firewall not configured (iptables inactive)
+[SCAN] Checking kernel parameters...
+[PASS] ASLR is enabled (kernel.randomize_va_space = 2)
+[WARN] ICMP redirects not disabled
+[SCAN] Verifying file permissions...
+[WARN] Found 3 world-writable files: /tmp/testfile, /var/tmp/test
+[SCAN] Checking services...
+[WARN] Unnecessary services running: cups, avahi-daemon
+[SCAN] Auditd configuration...
+[WARN] Auditd not installed
+[SCAN] SELinux/AppArmor status...
+[WARN] SELinux disabled (Current mode: permissive)
+
+[SUMMARY] Security audit completed
+[STATUS] 15 checks passed | 12 warnings found
+[INFO] Run 'kaktus' to apply hardening measures
+[INFO] Use 'kaktus --dry-run' to preview changes first`;
+        }
+        
+        function dryRunResponse() {
+            return `[DRY RUN] Kaktus v2.1.0 - Previewing changes:
+[SSH] Would set: PermitRootLogin no
+[SSH] Would set: PasswordAuthentication no
+[SSH] Would set: Protocol 2
+[SSH] Would set: MaxAuthTries 3
+[FIREWALL] Would enable iptables service
+[FIREWALL] Would set default policies to DROP
+[FIREWALL] Would allow established connections
+[USERS] Would set password aging: PASS_MAX_DAYS 90
+[USERS] Would lock system accounts: sync, games
+[KERNEL] Would set: net.ipv4.conf.all.rp_filter=1
+[KERNEL] Would set: net.ipv4.icmp_echo_ignore_broadcasts=1
+[KERNEL] Would set: net.ipv4.conf.all.accept_redirects=0
+[SERVICES] Would disable: cups, avahi-daemon
+[FILE PERMS] Would change mode of /tmp/testfile to 750
+[AUDITD] Would install and configure auditd
+[SELINUX] Would set: enforcing mode
+
+[IMPACT ANALYSIS] 
+- 3 services would be stopped
+- 12 config files would be modified
+- 1 package would be installed
+- Reboot required: Yes (for SELinux changes)
+
+[INFO] No changes were actually made (dry run mode)
+[INFO] Run 'kaktus' without --dry-run to apply changes`;
+        }
+        
+        function modulesResponse(command) {
+            const modules = command.match(/--modules\s+([a-z,_]+)/)[1].split(',');
+            let response = `[ACTION] Running hardening for modules: ${modules.join(', ')}\n\n`;
+            
+            if (modules.includes('ssh')) {
+                response += `[SSH] Backing up config to /etc/ssh/sshd_config.kaktus-backup
+[SSH] Setting PermitRootLogin no
+[SSH] Disabling password authentication
+[SSH] Setting Protocol 2
+[SSH] Setting MaxAuthTries 3
+[SSH] Restarting sshd service: OK\n\n`;
+            }
+            
+            if (modules.includes('firewall')) {
+                response += `[FIREWALL] Enabling iptables service
+[FIREWALL] Setting default policies to DROP
+[FIREWALL] Allowing established connections
+[FIREWALL] Allowing SSH on port 22
+[FIREWALL] Rules applied successfully\n\n`;
+            }
+            
+            if (modules.includes('kernel')) {
+                response += `[KERNEL] Setting net.ipv4.conf.all.rp_filter=1
+[KERNEL] Setting net.ipv4.icmp_echo_ignore_broadcasts=1
+[KERNEL] Setting net.ipv4.conf.all.accept_redirects=0
+[KERNEL] Parameters applied (sysctl -p)\n\n`;
+            }
+            
+            if (modules.includes('services')) {
+                response += `[SERVICES] Disabling cups.service
+[SERVICES] Disabling avahi-daemon.service
+[SERVICES] 2 unnecessary services disabled\n\n`;
+            }
+            
+            response += `[SUCCESS] Hardening completed for selected modules
+[BACKUP] Configuration backed up to /var/lib/kaktus/backups/20240615_142022_kaktus_backup
+[INFO] Some changes may require reboot to take effect`;
+            
+            return response;
+        }
+        
+        function listBackupsResponse() {
+            return `Available backups:
+1. 20240610_092345_pre_hardening
+2. 20240612_143022_after_ssh_hardening
+3. 20240614_093456_full_hardening
+
+To restore a backup:
+kaktus --rollback BACKUP_ID`;
+        }
+        
+        function hardeningResponse() {
+            return `[ACTION] Starting full system hardening (interactive mode)
+
+[CONFIRMATION] The following changes will be made:
+- SSH will be hardened (root login disabled, protocol 2 only)
+- Firewall will be configured (default DROP policy)
+- Kernel parameters will be optimized
+- Unnecessary services will be disabled
+- File permissions will be corrected
+- Auditd will be installed and configured
+- SELinux will be set to enforcing mode
+
+[WARNING] This will modify system configurations and may impact services.
+Type 'yes' to continue or 'no' to abort: yes
+
+[PROGRESS] Applying hardening measures...
+[SSH] Configuring... Done
+[FIREWALL] Configuring... Done
+[KERNEL] Setting parameters... Done
+[SERVICES] Disabling unnecessary services... Done
+[FILE PERMS] Correcting permissions... Done
+[AUDITD] Installing and configuring... Done
+[SELINUX] Setting to enforcing mode... Done
+
+[SUCCESS] System hardening completed successfully!
+[BACKUP] Backup created: /var/lib/kaktus/backups/20240615_142345_kaktus_backup
+[NOTE] Some changes require reboot to take effect
+[RECOMMEND] Run 'kaktus --audit' to verify all changes`;
+        }
+    });
+</script>
 
     <!-- Quick Start Section -->
     <section class="section" id="quickstart">
@@ -1215,63 +1775,63 @@
     </section>
 
     <!-- Compliance Section -->
-<section class="section" id="compliance">
-    <div class="container">
-        <div class="section-title">
-            <h2>Compliance Standards</h2>
-        </div>
-        
-        <div class="compliance">
-            <p style="font-size: 1.1rem; text-align: center; margin-bottom: 2rem;">
-                Kaktus integrates security best practices from leading industry standards and frameworks to ensure your systems meet stringent compliance requirements across multiple domains.
-            </p>
+    <section class="section" id="compliance">
+        <div class="container">
+            <div class="section-title">
+                <h2>Compliance Standards</h2>
+            </div>
             
-            <div class="standards-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
-                <!-- Row 1 -->
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
-                    <div class="standard-card">
-                        <i class="fas fa-balance-scale" style="font-size: 2.5rem; color: var(--accent);"></i>
-                        <h4>CIS Benchmarks</h4>
-                        <p>Level 1 & 2 compliance for secure configuration baselines</p>
-                        <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
-                            <small>✓ Server & Workstation profiles</small>
-                        </div>
-                    </div>
-                    
-                    <div class="standard-card">
-                        <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--accent);"></i>
-                        <h4>DISA STIG</h4>
-                        <p>CAT I–III compliance for military-grade security</p>
-                        <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
-                            <small>✓ DoD security requirements</small>
-                        </div>
-                    </div>
-                </div>
+            <div class="compliance">
+                <p style="font-size: 1.1rem; text-align: center; margin-bottom: 2rem;">
+                    Kaktus integrates security best practices from leading industry standards and frameworks to ensure your systems meet stringent compliance requirements across multiple domains.
+                </p>
                 
-                <!-- Row 2 -->
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
-                    <div class="standard-card">
-                        <i class="fas fa-file-alt" style="font-size: 2.5rem; color: var(--accent);"></i>
-                        <h4>NIST Framework</h4>
-                        <p>800-53/171 standards for federal compliance</p>
-                        <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
-                            <small>✓ Cybersecurity framework</small>
+                <div class="standards-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+                    <!-- Row 1 -->
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+                        <div class="standard-card">
+                            <i class="fas fa-balance-scale" style="font-size: 2.5rem; color: var(--accent);"></i>
+                            <h4>CIS Benchmarks</h4>
+                            <p>Level 1 & 2 compliance for secure configuration baselines</p>
+                            <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
+                                <small>✓ Server & Workstation profiles</small>
+                            </div>
+                        </div>
+                        
+                        <div class="standard-card">
+                            <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--accent);"></i>
+                            <h4>DISA STIG</h4>
+                            <p>CAT I–III compliance for military-grade security</p>
+                            <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
+                                <small>✓ DoD security requirements</small>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="standard-card">
-                        <i class="fas fa-globe" style="font-size: 2.5rem; color: var(--accent);"></i>
-                        <h4>OWASP Guidelines</h4>
-                        <p>Web application security best practices</p>
-                        <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
-                            <small>✓ Top 10 mitigations</small>
+                    <!-- Row 2 -->
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+                        <div class="standard-card">
+                            <i class="fas fa-file-alt" style="font-size: 2.5rem; color: var(--accent);"></i>
+                            <h4>NIST Framework</h4>
+                            <p>800-53/171 standards for federal compliance</p>
+                            <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
+                                <small>✓ Cybersecurity framework</small>
+                            </div>
+                        </div>
+                        
+                        <div class="standard-card">
+                            <i class="fas fa-globe" style="font-size: 2.5rem; color: var(--accent);"></i>
+                            <h4>OWASP Guidelines</h4>
+                            <p>Web application security best practices</p>
+                            <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
+                                <small>✓ Top 10 mitigations</small>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- Usage Section -->
     <section class="section" id="usage" style="background: rgba(10, 20, 33, 0.3);">
@@ -1334,13 +1894,13 @@
                     <h3>Kaktus</h3>
                     <p style="margin-bottom: 1.5rem;">Enterprise-grade automated security hardening tool for Linux systems. Making compliance achievable and security accessible for everyone.</p>
                     <div style="display: flex; gap: 1rem;">
-                        <a href="#" style="color: var(--primary); font-size: 1.5rem; transition: all 0.3s;">
+                        <a href="https://github.com/sarat1kyan" style="color: var(--primary); font-size: 1.5rem; transition: all 0.3s;">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="#" style="color: var(--primary); font-size: 1.5rem; transition: all 0.3s;">
+                        <a href="https://x.com/sarat1kyan" style="color: var(--primary); font-size: 1.5rem; transition: all 0.3s;">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" style="color: var(--primary); font-size: 1.5rem; transition: all 0.3s;">
+                        <a href="https://www.linkedin.com/in/sarat1kyan" style="color: var(--primary); font-size: 1.5rem; transition: all 0.3s;">
                             <i class="fab fa-linkedin"></i>
                         </a>
                     </div>
@@ -1349,11 +1909,11 @@
                 <div class="footer-section">
                     <h3>Resources</h3>
                     <ul class="footer-links">
-                        <li><a href="#"><i class="fas fa-book" style="margin-right: 8px;"></i>Documentation</a></li>
-                        <li><a href="#"><i class="fab fa-github" style="margin-right: 8px;"></i>GitHub Repository</a></li>
-                        <li><a href="#"><i class="fas fa-bug" style="margin-right: 8px;"></i>Issue Tracker</a></li>
-                        <li><a href="#"><i class="fas fa-tag" style="margin-right: 8px;"></i>Release Notes</a></li>
-                        <li><a href="#"><i class="fas fa-download" style="margin-right: 8px;"></i>Downloads</a></li>
+                        <li><a href="https://github.com/sarat1kyan/kaktus/documentation"><i class="fas fa-book" style="margin-right: 8px;"></i>Documentation</a></li>
+                        <li><a href="https://github.com/sarat1kyan/kaktus" target="_blank"><i class="fab fa-github" style="margin-right: 8px;"></i>GitHub Repository</a></li>
+                        <li><a href="https://github.com/sarat1kyan/kaktus/issues"><i class="fas fa-bug" style="margin-right: 8px;"></i>Issue Tracker</a></li>
+                        <li><a href="https://github.com/sarat1kyan/kaktus/releases"><i class="fas fa-tag" style="margin-right: 8px;"></i>Release Notes</a></li>
+                        <li><a href="https://github.com/sarat1kyan/kaktus/archive/refs/heads/main.zip"><i class="fas fa-download" style="margin-right: 8px;"></i>Downloads</a></li>
                     </ul>
                 </div>
                 
@@ -1456,75 +2016,163 @@
             observer.observe(el);
         });
 
-        // Interactive Demo
-        const demoButtons = document.querySelectorAll('.demo-btn');
-        const demoOutput = document.getElementById('demoOutput');
-        
-        const demoScenarios = {
-            audit: [
-                '<div style="color: var(--primary);">[INFO] Starting Kaktus security audit...</div>',
-                '<div style="color: var(--accent);">[SCAN] Checking user security configuration...</div>',
-                '<div style="color: var(--warning);">[WARN] Found 3 users with UID 0</div>',
-                '<div style="color: var(--accent);">[SCAN] Analyzing SSH configuration...</div>',
-                '<div style="color: var(--warning);">[WARN] Root SSH login enabled</div>',
-                '<div style="color: var(--accent);">[SCAN] Reviewing firewall rules...</div>',
-                '<div style="color: var(--warning);">[WARN] Firewall not configured</div>',
-                '<div style="color: var(--success);">[PASS] SELinux is enforcing</div>',
-                '<div style="color: var(--info);">[INFO] Audit complete. Found 12 issues to address.</div>'
-            ],
-            hardening: [
-                '<div style="color: var(--primary);">[INFO] Starting system hardening...</div>',
-                '<div style="color: var(--success);">[APPLY] Configuring SSH security settings</div>',
-                '<div style="color: var(--success);">[APPLY] Setting up firewall rules</div>',
-                '<div style="color: var(--success);">[APPLY] Hardening kernel parameters</div>',
-                '<div style="color: var(--success);">[APPLY] Configuring audit logging</div>',
-                '<div style="color: var(--success);">[APPLY] Fixing file permissions</div>',
-                '<div style="color: var(--info);">[BACKUP] Configuration backed up to /var/lib/kaktus/backups/</div>',
-                '<div style="color: var(--success);">[SUCCESS] System hardening completed successfully!</div>'
-            ],
-            rollback: [
-                '<div style="color: var(--primary);">[INFO] Available rollback points:</div>',
-                '<div style="color: var(--light);">  1. 20240115_143022_pre_hardening</div>',
-                '<div style="color: var(--light);">  2. 20240114_091543_pre_hardening</div>',
-                '<div style="color: var(--accent);">[ROLLBACK] Restoring from 20240115_143022_pre_hardening...</div>',
-                '<div style="color: var(--success);">[RESTORE] SSH configuration restored</div>',
-                '<div style="color: var(--success);">[RESTORE] Firewall rules restored</div>',
-                '<div style="color: var(--success);">[RESTORE] Kernel parameters restored</div>',
-                '<div style="color: var(--success);">[SUCCESS] System rolled back successfully!</div>'
-            ]
-        };
-
-        let currentDemo = 'audit';
-        let demoInterval;
-
-        function runDemo(scenario) {
-            demoOutput.innerHTML = '';
-            const lines = demoScenarios[scenario];
-            let index = 0;
+        // Interactive Terminal Demo
+        document.addEventListener('DOMContentLoaded', function() {
+            const terminalOutput = document.getElementById('terminal-output');
+            const commandInput = document.getElementById('command-input');
+            const commandButtons = document.querySelectorAll('.demo-btn[data-command]');
             
-            demoInterval = setInterval(() => {
-                if (index < lines.length) {
-                    demoOutput.innerHTML += lines[index] + '<br>';
-                    demoOutput.scrollTop = demoOutput.scrollHeight;
-                    index++;
-                } else {
-                    clearInterval(demoInterval);
-                }
-            }, 800);
-        }
-
-        demoButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                clearInterval(demoInterval);
-                demoButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentDemo = btn.getAttribute('data-demo');
-                runDemo(currentDemo);
+            // Focus the command input
+            commandInput.focus();
+            
+            // Terminal dot buttons
+            document.getElementById('close-dot').addEventListener('click', () => {
+                terminalOutput.innerHTML = '<div class="welcome-message"><p>Session terminated. Refresh page to restart.</p></div>';
+                commandInput.style.display = 'none';
             });
-        });
+            
+            document.getElementById('minimize-dot').addEventListener('click', () => {
+                terminalOutput.style.display = terminalOutput.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            document.getElementById('maximize-dot').addEventListener('click', () => {
+                document.querySelector('.demo-terminal').classList.toggle('fullscreen');
+            });
+            
+            // Command execution
+            commandInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const command = commandInput.textContent.trim();
+                    processCommand(command);
+                    commandInput.textContent = '';
+                }
+            });
+            
+            // Command buttons
+            commandButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const command = this.getAttribute('data-command');
+                    commandInput.textContent = command;
+                    processCommand(command);
+                    commandInput.textContent = '';
+                    commandInput.focus();
+                });
+            });
+            
+            // Command processor
+            function processCommand(command) {
+                // Add the command to output
+                const commandLine = document.createElement('div');
+                commandLine.className = 'terminal-line';
+                commandLine.innerHTML = `<span class="prompt">$</span> <span class="command">${command}</span>`;
+                terminalOutput.insertBefore(commandLine, commandInput.parentNode);
+                
+                // Process command
+                let response = '';
+                
+                switch(command.split(' ')[0]) {
+                    case 'kaktus':
+                    case './kaktus':
+                        if (command.includes('--audit')) {
+                            response = auditResponse();
+                        } else if (command.includes('--dry-run')) {
+                            response = dryRunResponse();
+                        } else if (command.includes('--modules')) {
+                            response = modulesResponse(command);
+                        } else {
+                            response = `Kaktus Linux Hardening Tool v1.2.0\nUsage: kaktus [options]\n\nTry 'kaktus --help' for more information.`;
+                        }
+                        break;
+                        
+                    case 'clear':
+                        terminalOutput.innerHTML = '<div class="welcome-message"><p>Kaktus Linux Hardening Tool v1.2.0 - Interactive Demo</p><p>Type <span class="command">help</span> to see available commands</p><br></div>';
+                        const newInputLine = document.createElement('div');
+                        newInputLine.className = 'terminal-line';
+                        newInputLine.innerHTML = `<span class="prompt">$</span> <span class="command" contenteditable="true" id="command-input"></span>`;
+                        terminalOutput.appendChild(newInputLine);
+                        commandInput = document.getElementById('command-input');
+                        commandInput.focus();
+                        return;
+                        
+                    case 'help':
+                        response = `Available commands:\n\nkaktus --audit       - Run security audit\nkaktus --dry-run     - Show what would be changed\nkaktus --modules ssh,firewall - Harden specific components\nclear                - Clear the terminal`;
+                        break;
+                        
+                    default:
+                        response = `Command not found: ${command}\nType 'help' for available commands`;
+                }
+                
+                // Add response to output
+                const responseDiv = document.createElement('div');
+                responseDiv.className = 'command-response';
+                responseDiv.textContent = response;
+                terminalOutput.insertBefore(responseDiv, commandInput.parentNode);
+                
+                // Scroll to bottom
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+            
+            // Demo responses
+            function auditResponse() {
+                return `[INFO] Starting Kaktus security audit...
+[SCAN] Checking user security configuration...
+[WARN] Found 3 users with UID 0 (root, admin, backup)
+[SCAN] Analyzing SSH configuration...
+[WARN] Root SSH login enabled (PermitRootLogin yes)
+[SCAN] Reviewing firewall rules...
+[WARN] Firewall not configured (iptables inactive)
+[SCAN] Checking kernel parameters...
+[PASS] ASLR is enabled (kernel.randomize_va_space = 2)
+[SCAN] Verifying file permissions...
+[WARN] Found world-writable files: /tmp/testfile
+[SCAN] Checking services...
+[WARN] Unnecessary services running: cups, avahi-daemon
 
-        // Start the first demo
-        runDemo('audit');
+[SUMMARY] Found 12 security issues to address
+[INFO] Run 'kaktus' to apply hardening measures`;
+            }
+            
+            function dryRunResponse() {
+                return `[DRY RUN] Previewing changes that would be made:
+[SSH] Would set: PermitRootLogin no
+[SSH] Would set: PasswordAuthentication no
+[SSH] Would set: Protocol 2
+[FIREWALL] Would enable iptables service
+[FIREWALL] Would set default policies to DROP
+[USERS] Would set password aging: PASS_MAX_DAYS 90
+[KERNEL] Would set: net.ipv4.conf.all.rp_filter=1
+[KERNEL] Would set: net.ipv4.icmp_echo_ignore_broadcasts=1
+
+[INFO] No changes were actually made (dry run mode)
+[INFO] Run 'kaktus' without --dry-run to apply changes`;
+            }
+            
+            function modulesResponse(command) {
+                const modules = command.match(/--modules\s+([a-z,]+)/)[1].split(',');
+                let response = `[INFO] Running hardening for modules: ${modules.join(', ')}\n\n`;
+                
+                if (modules.includes('ssh')) {
+                    response += `[SSH] Backing up config to /etc/ssh/sshd_config.kaktus-backup
+[SSH] Setting PermitRootLogin no
+[SSH] Disabling password authentication
+[SSH] Setting Protocol 2
+[SSH] Restarting sshd service\n\n`;
+                }
+                
+                if (modules.includes('firewall')) {
+                    response += `[FIREWALL] Enabling iptables service
+[FIREWALL] Setting default policies to DROP
+[FIREWALL] Allowing established connections
+[FIREWALL] Allowing SSH on port 22\n\n`;
+                }
+                
+                response += `[SUCCESS] Hardening completed for selected modules
+[INFO] Configuration backed up to /var/lib/kaktus/backups/`;
+                
+                return response;
+            }
+        });
 
         // Header scroll effect
         let lastScrollTop = 0;
@@ -1547,7 +2195,7 @@
         const navLinks = document.querySelector('.nav-links');
         
         mobileMenu.addEventListener('click', () => {
-                        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
         });
 
         // Close mobile menu when clicking on a link
