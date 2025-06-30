@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaktus - Linux System Hardening Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2a9d8f;
+            --secondary: #264653;
+            --accent: #e9c46a;
+            --warning: #e76f51;
+            --dark: #0d1b2a;
+            --darker: #0a1421;
+            --light: #e0e1dd;
+            --code-bg: #1d2d3d;
+            --terminal-bg: #011627;
+            --success: #2a9d8f;
+            --info: #4cc9f0;
+            --glass: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 50%, #1a2332 100%);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(42, 157, 143, 0.03) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Header Styles */
+        header {
+            background: rgba(10, 20, 33, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(42, 157, 143, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo i {
+            color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .github-btn {
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            color: var(--light);
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(42, 157, 143, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .github-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .github-btn:hover::before {
+            left: 100%;
+        }
+        
+        .github-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(42, 157, 143, 0.3);
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            cursor: pointer;
+            color: var(--light);
+            font-size: 1.5rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 6rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(42, 157, 143, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(233, 196, 106, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(76, 201, 240, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent), var(--info));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradient-shift 3s ease-in-out infinite;
+            background-size: 300% 300%;
+        }
+        
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .hero h1 i {
+            margin-right: 15px;
+            color: var(--primary);
+            animation: shield-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes shield-glow {
+            from { filter: drop-shadow(0 0 5px var(--primary)); }
+            to { filter: drop-shadow(0 0 15px var(--primary)); }
+        }
+        
+        .hero p {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            color: #c4d1e3;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .terminal-card {
+            background: var(--terminal-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 3rem auto;
+            text-align: left;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(42, 157, 143, 0.1);
+            border: 1px solid rgba(42, 157, 143, 0.2);
+            position: relative;
+            opacity: 0;
+            animation: slideInUp 1s ease-out 1s forwards;
+            overflow: hidden;
+        }
+        
+        .terminal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: scan 2s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .terminal-dots {
+            display: flex;
+            gap: 8px;
+            margin-right: 15px;
+        }
+        
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .terminal-dot:hover {
+            transform: scale(1.2);
+        }
+        
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        
+        .terminal-title {
+            color: #c4d1e3;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .terminal-content {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .terminal-content .prompt {
+            color: var(--primary);
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .terminal-content .command {
+            color: var(--accent);
+            font-weight: 500;
+        }
+        
+        .terminal-content .comment {
+            color: #5f7e97;
+            font-style: italic;
+        }
+        
+        .terminal-line {
+            opacity: 0;
+            animation: typeIn 0.5s ease-out forwards;
+        }
+        
+        .terminal-line:nth-child(1) { animation-delay: 1.5s; }
+        .terminal-line:nth-child(2) { animation-delay: 2s; }
+        .terminal-line:nth-child(3) { animation-delay: 2.5s; }
+        .terminal-line:nth-child(4) { animation-delay: 3s; }
+        .terminal-line:nth-child(5) { animation-delay: 3.5s; }
+        
+        @keyframes typeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2s forwards;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), #3ab3a3);
+            color: white;
+            box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(42, 157, 143, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(42, 157, 143, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(42, 157, 143, 0.2);
+        }
+        
+        /* Statistics Section */
+        .stats {
+            padding: 4rem 0;
+            background: rgba(10, 20, 33, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 12px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(42, 157, 143, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(42, 157, 143, 0.2);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+        
+        .stat-label {
+            color: var(--light);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* Section Styles */
+        .section {
+            padding: 6rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            margin: 1rem auto;
+            border-radius: 2px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 5px var(--primary); }
+            to { box-shadow: 0 0 20px var(--primary); }
+        }
+        
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .feature-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(42, 157, 143, 0.2);
+            position: relative;
+            overflow: hidden;
+            group: hover;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(42, 157, 143, 0.1), rgba(233, 196, 106, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 
+                0 25px 50px rgba(42, 157, 143, 0.2),
+                0 0 30px rgba(42, 157, 143, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 15px var(--primary));
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .feature-card p {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Interactive Terminal Demo */
+        .demo-terminal {
+            background: var(--terminal-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 3rem auto;
+            max-width: 900px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(42, 157, 143, 0.3);
+        }
+        
+        .demo-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-btn {
+            padding: 0.5rem 1rem;
+            background: var(--glass);
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .demo-btn:hover, .demo-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .demo-content {
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            min-height: 200px;
+        }
+        
+        /* Compliance Section */
+        .compliance {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(42, 157, 143, 0.2);
+        }
+        
+        .standards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .standard-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(233, 196, 106, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .standard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(233, 196, 106, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .standard-card:hover::before {
+            opacity: 1;
+        }
+        
+        .standard-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 15px 30px rgba(233, 196, 106, 0.2);
+        }
+        
+        .standard-card h4 {
+            color: var(--accent);
+            margin: 1rem 0;
+            font-size: 1.2rem;
+        }
+        
+        /* Enhanced Table */
+        .modules-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 3rem 0;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modules-table th {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            padding: 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+        
+        .modules-table td {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .modules-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .modules-table tr:hover {
+            background: rgba(42, 157, 143, 0.1);
+            transform: scale(1.01);
+        }
+        
+        .modules-table td:first-child {
+            font-weight: 600;
+            color: var(--accent);
+        }
+        
+        /* Code Snippet */
+        .code-snippet {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            position: relative;
+            border: 1px solid rgba(42, 157, 143, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .code-snippet::before {
+            content: 'Code';
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            font-size: 0.8rem;
+            color: var(--primary);
+            opacity: 0.7;
+        }
+        
+        .code-snippet .comment {
+            color: #5f7e97;
+        }
+        
+        .code-snippet .command {
+            color: var(--accent);
+            font-weight: 500;
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(10, 20, 33, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(42, 157, 143, 0.3);
+            position: relative;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+        
+        .footer-section h3 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            position: relative;
+            font-size: 1.3rem;
+        }
+        
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #c4d1e3;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+            padding-left: 10px;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #5f7e97;
+        }
+        
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            z-index: 1001;
+            transition: width 0.1s;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .terminal-card, .demo-terminal {
+                padding: 1.5rem;
+                margin: 2rem 1rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .standards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #3ab3a3, #f2d074);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation"></div>
+    
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <!-- Header -->
+    <header id="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Kaktus</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#quickstart">Quick Start</a>
+                    <a href="#modules">Modules</a>
+                    <a href="#compliance">Compliance</a>
+                    <a href="#usage">Usage</a>
+                </div>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <a href="https://github.com/sarat1kyan/kaktus" class="github-btn">
+                    <i class="fab fa-github"></i>
+                    GitHub
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1><i class="fas fa-shield-alt"></i>Kaktus: Linux System Hardening</h1>
+            <p>Enterprise-grade automated security hardening for Red Hat and Debian-based distributions</p>
+            
+            <div class="terminal-card">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <div class="terminal-dot dot-red"></div>
+                        <div class="terminal-dot dot-yellow"></div>
+                        <div class="terminal-dot dot-green"></div>
+                    </div>
+                    <div class="terminal-title">user@server:~</div>
+                </div>
+                <div class="terminal-content">
+                    <div class="terminal-line"><span class="prompt">$</span> <span class="command">git clone https://github.com/sarat1kyan/kaktus.git</span></div>
+                    <div class="terminal-line"><span class="prompt">$</span> <span class="command">cd kaktus</span></div>
+                    <div class="terminal-line"><span class="prompt">$</span> <span class="command">sudo ./install.sh</span></div>
+                    <div class="terminal-line comment"># Run your first audit:</div>
+                    <div class="terminal-line"><span class="prompt">$</span> <span class="command">sudo kaktus --audit-only</span></div>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <a href="#quickstart" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    Get Started
+                </a>
+                <a href="#features" class="btn btn-secondary">
+                    <i class="fas fa-compass"></i>
+                    Explore Features
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" data-target="8">0</span>
+                    <div class="stat-label">Security Modules</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" data-target="5">0</span>
+                    <div class="stat-label">Linux Distributions</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" data-target="100">0</span>
+                    <div class="stat-label">Security Checks</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" data-target="4">0</span>
+                    <div class="stat-label">Compliance Standards</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Enterprise Security Features</h2>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3>Multi-Distro Support</h3>
+                    <p>Compatible with RHEL 7/8/9, CentOS, Debian 10/11/12, and Ubuntu LTS distributions. Automatically detects your system and applies appropriate hardening measures.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-virus"></i>
+                    </div>
+                    <h3>Comprehensive Modules</h3>
+                    <p>Eight specialized security modules covering user security, SSH hardening, kernel parameters, file permissions, firewall configuration, services management, auditd, and MAC policies.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-undo-alt"></i>
+                    </div>
+                    <h3>Safety-First Design</h3>
+                    <p>Built-in dry-run mode, comprehensive impact analysis, automated configuration backups, and one-click rollback capabilities ensure your system stays operational.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <h3>Compliance Ready</h3>
+                    <p>Implements industry-standard security frameworks including CIS Benchmarks, DISA STIG, NIST 800-53/171, and OWASP guidelines for comprehensive compliance.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Automation Friendly</h3>
+                    <p>Support for JSON/YAML configuration profiles, non-interactive execution mode, and comprehensive logging make it perfect for CI/CD pipeline integration.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Detailed Reporting</h3>
+                    <p>Generate comprehensive security audit reports in multiple formats with color-coded severity indicators, compliance mapping, and actionable recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section class="section" id="demo" style="background: rgba(10, 20, 33, 0.3);">
+        <div class="container">
+            <div class="section-title">
+                <h2>Interactive Demo</h2>
+            </div>
+            
+            <div class="demo-terminal">
+                <div class="demo-controls">
+                    <button class="demo-btn active" data-demo="audit">Security Audit</button>
+                    <button class="demo-btn" data-demo="hardening">Apply Hardening</button>
+                    <button class="demo-btn" data-demo="rollback">Rollback Changes</button>
+                </div>
+                <div class="demo-content" id="demoContent">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <div class="terminal-dot dot-red"></div>
+                            <div class="terminal-dot dot-yellow"></div>
+                            <div class="terminal-dot dot-green"></div>
+                        </div>
+                        <div class="terminal-title">root@production-server:~</div>
+                    </div>
+                    <div id="demoOutput"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section class="section" id="quickstart">
+        <div class="container">
+            <div class="section-title">
+                <h2>5-Minute Quick Start</h2>
+            </div>
+            
+            <div class="terminal-card">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <div class="terminal-dot dot-red"></div>
+                        <div class="terminal-dot dot-yellow"></div>
+                        <div class="terminal-dot dot-green"></div>
+                    </div>
+                    <div class="terminal-title">user@server:~</div>
+                </div>
+                <div class="terminal-content">
+                    <div class="comment"># 1. Install Kaktus</div>
+                    <div><span class="prompt">$</span> <span class="command">git clone https://github.com/sarat1kyan/kaktus.git</span></div>
+                    <div><span class="prompt">$</span> <span class="command">cd kaktus</span></div>
+                    <div><span class="prompt">$</span> <span class="command">sudo ./install.sh</span></div>
+                    
+                    <div class="comment" style="margin-top: 20px;"># 2. Run initial audit</div>
+                    <div><span class="prompt">$</span> <span class="command">sudo kaktus --audit-only</span></div>
+                    
+                    <div class="comment" style="margin-top: 20px;"># 3. Preview changes (dry-run)</div>
+                    <div><span class="prompt">$</span> <span class="command">sudo kaktus --dry-run</span></div>
+                    
+                    <div class="comment" style="margin-top: 20px;"># 4. Apply hardening</div>
+                    <div><span class="prompt">$</span> <span class="command">sudo kaktus</span></div>
+                </div>
+            </div>
+            
+            <div style="background: var(--glass); backdrop-filter: blur(20px); border-radius: 12px; padding: 2rem; margin-top: 2rem; border: 1px solid rgba(231, 111, 81, 0.3);">
+                <h3 style="margin-bottom: 1.5rem; color: var(--warning); display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Pre-flight Checklist
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <h4 style="color: var(--accent); margin-bottom: 0.5rem;">🔒 Backup Strategy</h4>
+                        <p>Always have a full system backup before hardening production systems.</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent); margin-bottom: 0.5rem;">🖥️ Console Access</h4>
+                        <p>Ensure out-of-band access (IPMI, iLO, DRAC) - not just SSH.</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent); margin-bottom: 0.5rem;">🧪 Test Environment</h4>
+                        <p>Validate hardening on non-production systems first.</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent); margin-bottom: 0.5rem;">📋 Service Inventory</h4>
+                        <p>Document which services and daemons your system requires.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modules Section -->
+    <section class="section" id="modules">
+        <div class="container">
+            <div class="section-title">
+                <h2>Security Modules</h2>
+            </div>
+            
+            <table class="modules-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-cog"></i> Module</th>
+                        <th><i class="fas fa-list"></i> Key Features</th>
+                        <th><i class="fas fa-chart-line"></i> Impact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>User Security</td>
+                        <td>UID 0 checks, umask hardening, password aging, disable system accounts</td>
+                        <td><span style="color: var(--success);">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>SSH Hardening</td>
+                        <td>Disable root login, key-only auth, strong ciphers, connection timeouts</td>
+                        <td><span style="color: var(--success);">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>Kernel (sysctl)</td>
+                        <td>TCP/IP hardening, ASLR enablement, ICMP redirect protection</td>
+                        <td><span style="color: var(--info);">Medium</span></td>
+                    </tr>
+                    <tr>
+                        <td>File Permissions</td>
+                        <td>Fix critical file permissions, remove world-writable files</td>
+                        <td><span style="color: var(--success);">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>Firewall</td>
+                        <td>Auto-detect & configure iptables/nftables/firewalld/ufw</td>
+                        <td><span style="color: var(--warning);">Critical</span></td>
+                    </tr>
+                    <tr>
+                        <td>Services</td>
+                        <td>Disable unnecessary services, remove development tools</td>
+                        <td><span style="color: var(--info);">Medium</span></td>
+                    </tr>
+                    <tr>
+                        <td>Auditd</td>
+                        <td>Install & configure comprehensive audit logging rules</td>
+                        <td><span style="color: var(--success);">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>SELinux/AppArmor</td>
+                        <td>Enforce mandatory access controls, manage security policies</td>
+                        <td><span style="color: var(--warning);">Critical</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Compliance Section -->
+<section class="section" id="compliance">
+    <div class="container">
+        <div class="section-title">
+            <h2>Compliance Standards</h2>
+        </div>
+        
+        <div class="compliance">
+            <p style="font-size: 1.1rem; text-align: center; margin-bottom: 2rem;">
+                Kaktus integrates security best practices from leading industry standards and frameworks to ensure your systems meet stringent compliance requirements across multiple domains.
+            </p>
+            
+            <div class="standards-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+                <!-- Row 1 -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+                    <div class="standard-card">
+                        <i class="fas fa-balance-scale" style="font-size: 2.5rem; color: var(--accent);"></i>
+                        <h4>CIS Benchmarks</h4>
+                        <p>Level 1 & 2 compliance for secure configuration baselines</p>
+                        <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
+                            <small>✓ Server & Workstation profiles</small>
+                        </div>
+                    </div>
+                    
+                    <div class="standard-card">
+                        <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--accent);"></i>
+                        <h4>DISA STIG</h4>
+                        <p>CAT I–III compliance for military-grade security</p>
+                        <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
+                            <small>✓ DoD security requirements</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Row 2 -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+                    <div class="standard-card">
+                        <i class="fas fa-file-alt" style="font-size: 2.5rem; color: var(--accent);"></i>
+                        <h4>NIST Framework</h4>
+                        <p>800-53/171 standards for federal compliance</p>
+                        <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
+                            <small>✓ Cybersecurity framework</small>
+                        </div>
+                    </div>
+                    
+                    <div class="standard-card">
+                        <i class="fas fa-globe" style="font-size: 2.5rem; color: var(--accent);"></i>
+                        <h4>OWASP Guidelines</h4>
+                        <p>Web application security best practices</p>
+                        <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(42, 157, 143, 0.1); border-radius: 6px;">
+                            <small>✓ Top 10 mitigations</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Usage Section -->
+    <section class="section" id="usage" style="background: rgba(10, 20, 33, 0.3);">
+        <div class="container">
+            <div class="section-title">
+                <h2>Usage Examples</h2>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
+                <div>
+                    <h3 style="margin: 1.5rem 0; color: var(--accent); display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-server"></i>
+                        Common Use Cases
+                    </h3>
+                    
+                    <div class="code-snippet">
+                        <div class="comment"># Production Web Server</div>
+                        <div><span class="command">sudo kaktus --modules ssh,firewall,kernel,services</span></div>
+                        
+                        <div class="comment" style="margin-top: 15px;"># Database Server</div>
+                        <div><span class="command">sudo kaktus --modules user_security,ssh,kernel,file_permissions,auditd</span></div>
+                        
+                        <div class="comment" style="margin-top: 15px;"># Development Environment</div>
+                        <div><span class="command">sudo kaktus --config /etc/kaktus/profiles/development.yaml</span></div>
+                        
+                        <div class="comment" style="margin-top: 15px;"># Compliance Audit</div>
+                        <div><span class="command">sudo kaktus --audit-only --report compliance_audit.json</span></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 style="margin: 1.5rem 0; color: var(--accent); display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-terminal"></i>
+                        Quick Commands
+                    </h3>
+                    
+                    <div class="code-snippet">
+                        <div class="comment"># Preview what would change</div>
+                        <div><span class="command">sudo kaktus --dry-run | grep "Would"</span></div>
+                        
+                        <div class="comment" style="margin-top: 15px;"># Harden only SSH & firewall</div>
+                        <div><span class="command">sudo kaktus --modules ssh,firewall</span></div>
+                        
+                        <div class="comment" style="margin-top: 15px;"># Non-interactive mode for automation</div>
+                        <div><span class="command">sudo kaktus --non-interactive --config production.yaml</span></div>
+                        
+                        <div class="comment" style="margin-top: 15px;"># Roll back to previous state</div>
+                        <div><span class="command">sudo kaktus --rollback 20240115_143022_pre_hardening</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Kaktus</h3>
+                    <p style="margin-bottom: 1.5rem;">Enterprise-grade automated security hardening tool for Linux systems. Making compliance achievable and security accessible for everyone.</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#" style="color: var(--primary); font-size: 1.5rem; transition: all 0.3s;">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" style="color: var(--primary); font-size: 1.5rem; transition: all 0.3s;">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" style="color: var(--primary); font-size: 1.5rem; transition: all 0.3s;">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-book" style="margin-right: 8px;"></i>Documentation</a></li>
+                        <li><a href="#"><i class="fab fa-github" style="margin-right: 8px;"></i>GitHub Repository</a></li>
+                        <li><a href="#"><i class="fas fa-bug" style="margin-right: 8px;"></i>Issue Tracker</a></li>
+                        <li><a href="#"><i class="fas fa-tag" style="margin-right: 8px;"></i>Release Notes</a></li>
+                        <li><a href="#"><i class="fas fa-download" style="margin-right: 8px;"></i>Downloads</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Community</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-hands-helping" style="margin-right: 8px;"></i>Contributing Guide</a></li>
+                        <li><a href="#"><i class="fas fa-gavel" style="margin-right: 8px;"></i>Code of Conduct</a></li>
+                        <li><a href="#"><i class="fas fa-comments" style="margin-right: 8px;"></i>Discussion Forum</a></li>
+                        <li><a href="#"><i class="fas fa-shield-alt" style="margin-right: 8px;"></i>Security Advisories</a></li>
+                        <li><a href="#"><i class="fas fa-graduation-cap" style="margin-right: 8px;"></i>Tutorials</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-question-circle" style="margin-right: 8px;"></i>FAQ</a></li>
+                        <li><a href="#"><i class="fas fa-life-ring" style="margin-right: 8px;"></i>Help Center</a></li>
+                        <li><a href="#"><i class="fas fa-envelope" style="margin-right: 8px;"></i>Contact Us</a></li>
+                        <li><a href="#"><i class="fas fa-coffee" style="margin-right: 8px;"></i>Sponsor Project</a></li>
+                        <li><a href="#"><i class="fas fa-certificate" style="margin-right: 8px;"></i>Enterprise Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2024 Kaktus Project. Released under MIT License. Created by Mher Saratikyan - HEXESHELL with ❤️ for Linux security.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            scrollProgress.style.width = scrollPercent + '%';
+        });
+
+        // Smooth Scrolling for Navigation Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animated Counter for Statistics
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const increment = target / (duration / 16); // 60fps
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    counter.textContent = Math.floor(current);
+                }, 16);
+            });
+        }
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('stats')) {
+                        animateCounters();
+                    }
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.feature-card, .standard-card, .stats').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Interactive Demo
+        const demoButtons = document.querySelectorAll('.demo-btn');
+        const demoOutput = document.getElementById('demoOutput');
+        
+        const demoScenarios = {
+            audit: [
+                '<div style="color: var(--primary);">[INFO] Starting Kaktus security audit...</div>',
+                '<div style="color: var(--accent);">[SCAN] Checking user security configuration...</div>',
+                '<div style="color: var(--warning);">[WARN] Found 3 users with UID 0</div>',
+                '<div style="color: var(--accent);">[SCAN] Analyzing SSH configuration...</div>',
+                '<div style="color: var(--warning);">[WARN] Root SSH login enabled</div>',
+                '<div style="color: var(--accent);">[SCAN] Reviewing firewall rules...</div>',
+                '<div style="color: var(--warning);">[WARN] Firewall not configured</div>',
+                '<div style="color: var(--success);">[PASS] SELinux is enforcing</div>',
+                '<div style="color: var(--info);">[INFO] Audit complete. Found 12 issues to address.</div>'
+            ],
+            hardening: [
+                '<div style="color: var(--primary);">[INFO] Starting system hardening...</div>',
+                '<div style="color: var(--success);">[APPLY] Configuring SSH security settings</div>',
+                '<div style="color: var(--success);">[APPLY] Setting up firewall rules</div>',
+                '<div style="color: var(--success);">[APPLY] Hardening kernel parameters</div>',
+                '<div style="color: var(--success);">[APPLY] Configuring audit logging</div>',
+                '<div style="color: var(--success);">[APPLY] Fixing file permissions</div>',
+                '<div style="color: var(--info);">[BACKUP] Configuration backed up to /var/lib/kaktus/backups/</div>',
+                '<div style="color: var(--success);">[SUCCESS] System hardening completed successfully!</div>'
+            ],
+            rollback: [
+                '<div style="color: var(--primary);">[INFO] Available rollback points:</div>',
+                '<div style="color: var(--light);">  1. 20240115_143022_pre_hardening</div>',
+                '<div style="color: var(--light);">  2. 20240114_091543_pre_hardening</div>',
+                '<div style="color: var(--accent);">[ROLLBACK] Restoring from 20240115_143022_pre_hardening...</div>',
+                '<div style="color: var(--success);">[RESTORE] SSH configuration restored</div>',
+                '<div style="color: var(--success);">[RESTORE] Firewall rules restored</div>',
+                '<div style="color: var(--success);">[RESTORE] Kernel parameters restored</div>',
+                '<div style="color: var(--success);">[SUCCESS] System rolled back successfully!</div>'
+            ]
+        };
+
+        let currentDemo = 'audit';
+        let demoInterval;
+
+        function runDemo(scenario) {
+            demoOutput.innerHTML = '';
+            const lines = demoScenarios[scenario];
+            let index = 0;
+            
+            demoInterval = setInterval(() => {
+                if (index < lines.length) {
+                    demoOutput.innerHTML += lines[index] + '<br>';
+                    demoOutput.scrollTop = demoOutput.scrollHeight;
+                    index++;
+                } else {
+                    clearInterval(demoInterval);
+                }
+            }, 800);
+        }
+
+        demoButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                clearInterval(demoInterval);
+                demoButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentDemo = btn.getAttribute('data-demo');
+                runDemo(currentDemo);
+            });
+        });
+
+        // Start the first demo
+        runDemo('audit');
+
+        // Header scroll effect
+        let lastScrollTop = 0;
+        const header = document.getElementById('header');
+        
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                header.style.transform = 'translateY(-100%)';
+            } else {
+                header.style.transform = 'translateY(0)';
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+
+        // Mobile menu toggle
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenu.addEventListener('click', () => {
+                        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    navLinks.style.display = 'none';
+                }
+            });
+        });
+
+        // Responsive adjustments
+        function handleResize() {
+            if (window.innerWidth > 768) {
+                navLinks.style.display = 'flex';
+            } else {
+                navLinks.style.display = 'none';
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            handleResize();
+            animateCounters();
+        });
+
+        window.addEventListener('resize', handleResize);
+
+        // Typewriter effect for terminal lines
+        const terminalLines = document.querySelectorAll('.terminal-line');
+        terminalLines.forEach((line, index) => {
+            setTimeout(() => {
+                line.style.opacity = '1';
+                line.style.transform = 'translateX(0)';
+            }, 500 * (index + 1));
+        });
+
+        // Theme switcher (could be added to the header)
+        const themeSwitcher = document.createElement('div');
+        themeSwitcher.innerHTML = '<i class="fas fa-moon"></i>';
+        themeSwitcher.style.position = 'fixed';
+        themeSwitcher.style.bottom = '20px';
+        themeSwitcher.style.right = '20px';
+        themeSwitcher.style.background = 'var(--secondary)';
+        themeSwitcher.style.width = '50px';
+        themeSwitcher.style.height = '50px';
+        themeSwitcher.style.borderRadius = '50%';
+        themeSwitcher.style.display = 'flex';
+        themeSwitcher.style.justifyContent = 'center';
+        themeSwitcher.style.alignItems = 'center';
+        themeSwitcher.style.cursor = 'pointer';
+        themeSwitcher.style.zIndex = '1000';
+        themeSwitcher.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+        themeSwitcher.style.transition = 'all 0.3s ease';
+        
+        themeSwitcher.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            if (document.body.classList.contains('dark-theme')) {
+                themeSwitcher.innerHTML = '<i class="fas fa-sun"></i>';
+                themeSwitcher.style.background = 'var(--accent)';
+            } else {
+                themeSwitcher.innerHTML = '<i class="fas fa-moon"></i>';
+                themeSwitcher.style.background = 'var(--secondary)';
+            }
+        });
+        
+        document.body.appendChild(themeSwitcher);
+
+        // Add dark theme styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .dark-theme {
+                --primary: #3a86ff;
+                --secondary: #14213d;
+                --accent: #fca311;
+                --warning: #e63946;
+                --dark: #0a0a0a;
+                --darker: #050505;
+                --light: #f8f9fa;
+                --code-bg: #1a1a2e;
+                --terminal-bg: #0d1321;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
