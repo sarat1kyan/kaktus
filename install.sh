@@ -23,10 +23,10 @@ set -euo pipefail  # Exit on error, undefined variables, pipe failures
 readonly TOOL_NAME="Enhanced Linux Hardening Tool"
 readonly TOOL_VERSION="2.0.0"
 readonly TOOL_REPO="https://github.com/yourusername/enhanced-linux-hardening-tool"
-readonly INSTALL_DIR="/opt/linux-hardening-tool"
+readonly INSTALL_DIR="/opt/kaktus"
 readonly BIN_DIR="/usr/local/bin"
-readonly CONFIG_DIR="/etc/linux-hardening-tool"
-readonly LOG_DIR="/var/log/linux-hardening-tool"
+readonly CONFIG_DIR="/etc/kaktus"
+readonly LOG_DIR="/var/log/kaktus"
 readonly SERVICE_DIR="/etc/systemd/system"
 readonly PYTHON_MIN_VERSION="3.8"
 
@@ -509,7 +509,7 @@ reporting:
   include_system_info: true
   include_compliance_mapping: true
   executive_summary: true
-  output_directory: /opt/linux-hardening-tool/reports
+  output_directory: /opt/kaktus/reports
 
 # Security Settings
 security:
@@ -520,7 +520,7 @@ security:
 # Logging Settings
 logging:
   level: INFO
-  file: /var/log/linux-hardening-tool/hardening.log
+  file: /var/log/kaktus/hardening.log
   max_size: 10MB
   backup_count: 5
 EOF
@@ -696,9 +696,9 @@ EOF
 create_symlink() {
     if [[ "$CREATE_SYMLINK" == "true" ]]; then
         print_status "Creating symbolic link..."
-        ln -sf "$INSTALL_DIR/enhanced_hardening_tool.py" "$BIN_DIR/linux-hardening-tool"
-        chmod +x "$BIN_DIR/linux-hardening-tool"
-        print_success "Symbolic link created: $BIN_DIR/linux-hardening-tool"
+        ln -sf "$INSTALL_DIR/enhanced_hardening_tool.py" "$BIN_DIR/kaktus"
+        chmod +x "$BIN_DIR/kaktus"
+        print_success "Symbolic link created: $BIN_DIR/kaktus"
     fi
 }
 
