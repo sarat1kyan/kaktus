@@ -673,9 +673,8 @@ Error: Permission denied when modifying sshd_config
 3. Error occurs at step 3
 
 **Logs:**
-```
 [ERROR] Failed to modify /etc/ssh/sshd_config: Permission denied
-```
+
 
 ### 💡 Feature Requests
 
