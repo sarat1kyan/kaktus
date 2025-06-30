@@ -7,7 +7,7 @@
 # Supports: RHEL, CentOS, Fedora, Debian, Ubuntu, SUSE, Arch Linux
 #
 # Usage: 
-#   curl -sSL https://raw.githubusercontent.com/yourusername/enhanced-linux-hardening-tool/main/install.sh | sudo bash
+#   curl -sSL https://raw.githubusercontent.com/sarat1kyan/kaktus/main/install.sh | sudo bash
 #   or
 #   chmod +x install.sh && sudo ./install.sh
 #
