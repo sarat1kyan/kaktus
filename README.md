@@ -881,29 +881,7 @@ Full license attributions available in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LIC
 - 🧑‍💻 **@sarat1kyan** - Project founder and lead maintainer
 
 **Core Contributors:**
-- 👨‍💻 **Security Team** - Architecture design and implementation
-- 👩‍💻 **Compliance Experts** - Framework integration and validation
-- 🧑‍🔬 **Testing Team** - Quality assurance and validation
-
-**Community Contributors:**
-- 🌟 **50+ GitHub contributors** - Bug fixes, features, and documentation
-- 🌍 **Security researchers** - Vulnerability reports and improvements
-- 📚 **Documentation team** - User guides and tutorials
-- 🌐 **Translation team** - Internationalization support
-
-### 🏆 Special Recognition
-
-**Beta Testers:**
-- 🏢 Enterprise security teams who provided production feedback
-- 🏛️ Government agencies who validated compliance implementations
-- ☁️ Cloud providers who tested scalability and performance
-- 🎓 Academic institutions who contributed research insights
-
-**Security Advisors:**
-- 🕵️ Independent security researchers
-- 🏛️ CERT coordination centers
-- 🔒 Cybersecurity consultants
-- 🎯 Penetration testing teams
+- 👨‍💻 **Your name can be here**
 
 ---
 
