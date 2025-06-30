@@ -1,392 +1,331 @@
-# Linux System Hardening Tool
+---
 
-An enterprise-grade automated security hardening tool for Red Hat and Debian-based Linux distributions. This tool implements security best practices from CIS Benchmarks, DISA STIG, NIST guidelines, and OWASP recommendations.
+# 🛡️ Kaktus: Linux System Hardening Tool
 
-## Features
+An **enterprise-grade automated security hardening tool** for Red Hat- and Debian-based Linux distributions. Kaktus integrates best practices from **CIS Benchmarks**, **DISA STIG**, **NIST 800-53/171**, and **OWASP**, offering powerful, auditable, and safe system security.
 
-### Core Capabilities
+---
 
-- **Multi-Distribution Support**: RHEL 7/8/9, CentOS, Debian 10/11/12, Ubuntu LTS
-- **Comprehensive Security Modules**:
-  - User and group security hardening
-  - SSH server hardening
-  - Kernel parameter tuning (sysctl)
-  - File permissions and ownership fixes
-  - Firewall configuration (iptables/nftables/firewalld/ufw)
-  - Service and package management
-  - Audit logging (auditd) configuration
-  - SELinux/AppArmor hardening
-  - Automatic security updates configuration
+## 💨 Quick Start Guide
 
-### Safety Features
+### 🚀 5-Minute Quick Start
 
-- **Dry-Run Mode**: Preview all changes before applying
-- **Impact Analysis**: Detailed assessment of changes before execution
-- **Backup & Rollback**: Automatic backups with easy rollback capability
-- **Service Detection**: Automatically detects running services to avoid disruption
-- **Network Safety**: Maintains SSH access to prevent lockouts
+1. **Installation**  
+   ```bash
+   # Download the tool
+   git clone https://github.com/sarat1kyan/kaktus.git
+   cd kaktus
 
-### Enterprise Features
+   # Run installer (requires root)
+   sudo ./install.sh
+   ```
 
-- **Modular Architecture**: Enable/disable specific hardening modules
-- **Configuration Profiles**: JSON/YAML support for reusable policies
-- **Comprehensive Reporting**: Detailed audit and action reports
-- **Logging**: Full activity logging for compliance
-- **Non-Interactive Mode**: Suitable for automation
+2. **First Audit** *(Recommended)*  
+   Always start with an audit to understand your system’s current security posture:  
+   ```bash
+   sudo kaktus --audit-only
+   ```
 
-## Installation
+3. **Test Run**  
+   Use dry-run mode to preview changes without applying them:  
+   ```bash
+   sudo kaktus --dry-run
+   ```
 
-### Prerequisites
+4. **Apply Hardening**  
+   When ready, apply the hardening configurations:  
+   ```bash
+   sudo kaktus
+   ```
 
-- Python 3.6 or higher
-- Root/sudo access
-- Supported Linux distribution
+### 📋 Pre-flight Checklist
 
-### Quick Install
+- Backup your system — always have a full system backup  
+- Console access — ensure out-of-band access (not just SSH)  
+- Test environment — validate on non-production systems first  
+- Review services — know which daemons your system needs  
+- Document current state — save existing configurations  
 
-Go for QuickInstallGuide.md
+### 🛡️ Common Use Cases
 
-### Quick Run
-
+**Production Web Server**  
 ```bash
-# Clone or download the tool
-git clone https://github.com/sarat1kyan/kaktus.git
-chmod +x kaktus.py
-
-# Quick Run dependencies (if any)
-pip3 install pyyaml  # Only if using YAML configs
+sudo kaktus --modules ssh,firewall,kernel,services
 ```
 
-## Usage
+**Database Server**  
+(*Exclude firewall if using custom DB ports*)  
+```bash
+sudo kaktus --modules user_security,ssh,kernel,file_permissions,auditd
+```
 
-### Basic Commands
+**Development Environment**  
+```bash
+sudo kaktus --config /etc/kaktus/profiles/development.yaml
+```
+
+**Compliance Audit**  
+Generate a detailed report without making changes:  
+```bash
+sudo kaktus --audit-only --report compliance_audit.json
+```
+
+### ⚡ Quick Commands
 
 ```bash
-# Perform security audit only
+# Preview what would change
+sudo kaktus --dry-run | grep "Would"
+
+# Harden only SSH & firewall
+sudo kaktus --modules ssh,firewall
+
+# Non-interactive mode for automation
+sudo kaktus --non-interactive --config production.yaml
+
+# List backups
+sudo kaktus --list-backups
+
+# Roll back
+sudo kaktus --rollback 20240115_143022_pre_hardening
+```
+
+### 🔍 Understanding Output
+
+**Audit Results** use color-coded severity:  
+🔴 CRITICAL | 🟠 HIGH | 🟡 MEDIUM | 🔵 LOW | ⚪ INFO  
+
+**Impact Analysis** highlights high-impact changes, e.g.:  
+```
+HIGH IMPACT CHANGES:
+  - Set SELinux to enforcing mode (requires reboot)
+```
+
+---
+
+## 🚀 Features
+
+### ✅ Core Capabilities
+- **Multi-Distro Support**: RHEL 7/8/9, CentOS, Debian 10/11/12, Ubuntu LTS  
+- **Security Modules**: user/group, SSH, sysctl, file perms, firewall, services, auditd, SELinux/AppArmor, updates  
+
+### 🛑 Safety-First Design
+- Dry-Run Mode  
+- Impact Analysis  
+- Backup & Rollback  
+- Service-Aware  
+- Network Safety  
+
+### 🏢 Enterprise-Ready
+- Modular Architecture  
+- JSON/YAML Config Profiles  
+- Audit Reporting  
+- Full Logging  
+- Automation-Friendly  
+
+---
+
+## 📦 Installation
+
+### Prerequisites
+- Python 3.6+  
+- Root/sudo access  
+- Supported Linux distro  
+
+### Quick Install
+```bash
+git clone https://github.com/sarat1kyan/kaktus.git
+chmod +x kaktus.py
+pip3 install pyyaml  # for YAML configs
+```
+
+---
+
+## ⚙️ Usage
+
+### 🧪 Basic Commands
+```bash
 sudo ./kaktus.py --audit-only
-
-# Run in dry-run mode (recommended first run)
 sudo ./kaktus.py --dry-run
-
-# Apply hardening interactively
-sudo ./kaktus.py
-
-# Apply hardening non-interactively
+sudo ./kaktus.py             # interactive
 sudo ./kaktus.py --non-interactive
-
-# Generate audit report
 sudo ./kaktus.py --audit-only --report audit_report.json
 ```
 
-### Advanced Usage
-
+### 🧩 Advanced Usage
 ```bash
-# Use custom configuration
-sudo ./kaktus.py --config custom_hardening.yaml
-
-# Run specific modules only
+sudo ./kaktus.py --config hardening.yaml
 sudo ./kaktus.py --modules ssh,firewall,kernel
-
-# List available backups
 sudo ./kaktus.py --list-backups
-
-# Rollback to previous state
 sudo ./kaktus.py --rollback 20240115_143022_pre_hardening
 ```
 
-## Configuration
+---
 
-### Configuration File Format
+## 🛠️ Configuration
 
-Create a YAML or JSON configuration file to customize the tool's behavior:
-
-**YAML Example (hardening_config.yaml):**
+### YAML Example
 ```yaml
 modules:
-  user_security:
-    enabled: true
   ssh:
     enabled: true
     config:
       permit_root_login: false
       password_authentication: false
-  kernel:
-    enabled: true
-  file_permissions:
-    enabled: true
-  firewall:
-    enabled: true
-    config:
-      default_policy: drop
-      allowed_ports:
-        - 22
-        - 443
-  services:
-    enabled: true
-  auditd:
-    enabled: true
-  selinux:
-    enabled: true
-
 options:
   create_backup: true
   interactive: false
   report_format: json
 ```
 
-**JSON Example (hardening_config.json):**
+### JSON Example
 ```json
 {
   "modules": {
-    "user_security": {"enabled": true},
-    "ssh": {
-      "enabled": true,
-      "config": {
-        "permit_root_login": false,
-        "password_authentication": false
-      }
-    },
-    "kernel": {"enabled": true},
-    "file_permissions": {"enabled": true},
-    "firewall": {"enabled": true},
-    "services": {"enabled": true},
-    "auditd": {"enabled": true},
-    "selinux": {"enabled": true}
+    "ssh": { "enabled": true, "config": { "permit_root_login": false } }
   },
-  "options": {
-    "create_backup": true,
-    "interactive": false,
-    "report_format": "json"
-  }
+  "options": { "create_backup": true, "interactive": false }
 }
 ```
 
-## Security Modules
+---
 
-### 1. User Security Module
-- Checks for empty passwords
-- Identifies non-root users with UID 0
-- Configures password aging policies
-- Sets secure umask values
-- Disables unnecessary system accounts
+## 🔒 Security Modules Overview
 
-### 2. SSH Hardening Module
-- Disables root login
-- Enforces key-based authentication
-- Configures secure ciphers and algorithms
-- Sets connection timeouts
-- Limits authentication attempts
+| Module         | Highlights                                                          |
+| -------------- | ------------------------------------------------------------------- |
+| User Security  | UID 0 checks, umask, password aging, disable system accounts        |
+| SSH Hardening  | Disable root login, key auth, strong ciphers, timeouts             |
+| Kernel (sysctl)| Harden TCP/IP, ASLR, ICMP redirect protection                       |
+| File Perms     | Fix critical file perms, remove world-writable                      |
+| Firewall       | Auto-detect & configure iptables/nftables/firewalld/ufw             |
+| Services       | Disable unneeded services, prune dev tools                          |
+| Auditd         | Install + configure comprehensive audit rules                       |
+| SELinux/AppArmor| Enforce MAC, manage policies                                       |
 
-### 3. Kernel Hardening Module
-- Disables IP forwarding
-- Prevents ICMP redirects
-- Enables TCP SYN cookies
-- Configures ASLR (Address Space Layout Randomization)
-- Sets secure sysctl parameters
+---
 
-### 4. File Permissions Module
-- Fixes permissions on critical system files
-- Removes world-writable permissions
-- Identifies and fixes unowned files
-- Secures configuration files
+## 📊 Impact Analysis
 
-### 5. Firewall Module
-- Automatically detects firewall type
-- Configures restrictive default policies
-- Maintains SSH access
-- Supports firewalld, ufw, and iptables
-
-### 6. Service Hardening Module
-- Disables unnecessary services
-- Removes development tools on production systems
-- Configures automatic security updates
-- Manages service dependencies
-
-### 7. Audit Module
-- Installs and configures auditd
-- Sets comprehensive audit rules
-- Monitors authentication changes
-- Tracks administrative actions
-- Configures log rotation
-
-### 8. MAC Module (SELinux/AppArmor)
-- Enables mandatory access controls
-- Sets enforcing mode
-- Configures security contexts
-- Manages security policies
-
-## Impact Analysis
-
-Before applying changes, the tool provides detailed impact analysis:
-
-```
+```text
 ============================================================
 IMPACT ANALYSIS
 ============================================================
-Total changes to be made: 47
-Files to be modified: 23
-Requires reboot: Yes
+Total changes: 47
+Modified files: 23
+Reboot required: Yes
 
-HIGH IMPACT CHANGES:
-  - Set SELinux to enforcing mode
-    Impact: SELinux will enforce security policies (requires reboot if disabled)
+HIGH IMPACT:
+  - SELinux set to enforcing mode
 
-MEDIUM IMPACT CHANGES:
-  - Applied SSH hardening configuration
-  - Configured firewalld with restrictive rules
+MEDIUM IMPACT:
+  - SSH hardened
+  - firewalld rules applied
 
-SERVICES AFFECTED:
-  - Disabled service: telnet
-  - Disabled service: rsh
+Services impacted:
+  - telnet (disabled)
+  - rsh (disabled)
 ```
 
-## Backup and Rollback
+---
 
-The tool automatically creates backups before making changes:
+## 🧬 Backup & Rollback
 
 ```bash
-# List all backups
 sudo ./kaktus.py --list-backups
-
-# Output:
-Available backups:
-  20240115_143022_pre_hardening - pre_hardening (20240115_143022)
-  20240115_145533_ssh_hardening - ssh_hardening (20240115_145533)
-
-# Rollback to specific backup
-sudo ./kaktus.py --rollback 20240115_143022_pre_hardening
+sudo ./kaktus.py --rollback <backup_id>
 ```
+Backups live in `/var/backups/kaktus/`.
 
-## Reports
+---
 
-The tool generates comprehensive JSON reports containing:
+## 📑 Reports
 
-- System information
-- Audit results with severity levels
-- Actions taken during hardening
-- Statistics and summary
-- Timestamp and metadata
-
-Example report structure:
+Generates JSON with metadata, audit summary, actions, and stats:
 ```json
 {
-  "metadata": {
-    "tool_version": "1.0.0",
-    "timestamp": "2024-01-15T14:30:22",
-    "hostname": "prod-server-01",
-    "distro": {
-      "type": "ubuntu",
-      "name": "Ubuntu",
-      "version": "22.04",
-      "codename": "jammy"
-    }
-  },
-  "audit_summary": {
-    "total_checks": 89,
-    "passed": 67,
-    "failed": 18,
-    "warnings": 4
-  },
-  "audit_results": [...],
+  "metadata": { "tool_version": "1.0.0", ... },
+  "audit_summary": { "passed": 67, "failed": 18 },
   "actions_taken": [...],
-  "statistics": {
-    "critical_issues": 2,
-    "high_issues": 7,
-    "medium_issues": 9,
-    "low_issues": 0
-  }
+  "statistics": { "critical_issues": 2, ... }
 }
 ```
 
-## Best Practices
+---
 
-1. **Always run audit first**: Use `--audit-only` to understand current security posture
-2. **Test with dry-run**: Use `--dry-run` before applying changes
-3. **Review impact analysis**: Carefully review the impact analysis before proceeding
-4. **Maintain SSH access**: Ensure you have console access or out-of-band management
-5. **Test in non-production**: Always test on non-production systems first
-6. **Keep backups**: The tool creates backups, but maintain system-level backups too
-7. **Document changes**: Keep the generated reports for compliance and documentation
+## 🧠 Best Practices
 
-## Troubleshooting
+- Start with `--audit-only`  
+- Always run `--dry-run`  
+- Review impact analysis  
+- Test in non-production  
+- Maintain backups & docs  
 
-### Common Issues
+---
 
-1. **SSH Lockout Prevention**
-   - The tool maintains current SSH session
-   - Always test SSH configuration changes with a secondary connection
-   - Keep console access available
+## 🧯 Troubleshooting
 
-2. **SELinux Issues**
-   - Some changes require relabeling (touch /.autorelabel && reboot)
-   - Check audit logs: `ausearch -m avc -ts recent`
+- **SSH Lockouts**: SSH preserved; test with second session  
+- **SELinux Warnings**: `touch /.autorelabel && reboot`; check `ausearch`  
+- **Service Issues**: Review deps; monitor logs  
+- **Debug Mode**:  
+  ```bash
+  export LOG_LEVEL=DEBUG
+  sudo ./kaktus.py --dry-run
+  ```
 
-3. **Service Disruptions**
-   - Review services before disabling
-   - Check service dependencies
-   - Monitor logs after hardening
+---
 
-### Debug Mode
+## ✅ Compliance Mapping
 
-Enable verbose logging:
-```bash
-export LOG_LEVEL=DEBUG
-sudo ./kaktus.py --dry-run
-```
+- CIS Benchmarks (Lvl 1 & 2)  
+- DISA STIG (CAT I–III)  
+- NIST 800-53/171  
+- OWASP server guidelines  
 
-## Compliance Mapping
+---
 
-The tool implements controls from:
-
-- **CIS Benchmarks**: Level 1 and Level 2 controls
-- **DISA STIG**: CAT I, II, and III findings
-- **NIST 800-53**: Security controls for federal systems
-- **NIST 800-171**: Protecting CUI in non-federal systems
-- **OWASP**: Server hardening guidelines
-
-## Directory Structure
+## 📁 Directory Structure
 
 ```
-/var/log/kaktus/      # Logs
-/var/backups/kaktus/  # Backup files
-/etc/kaktus/          # Configuration
-/etc/kaktus/profiles/ # Security profiles
+/var/log/kaktus/       – Logs  
+/var/backups/kaktus/   – Backups  
+/etc/kaktus/           – Config  
+/etc/kaktus/profiles/  – Profiles  
 ```
 
-## Security Considerations
+---
 
-- The tool requires root access - protect it accordingly
-- Backup files may contain sensitive information
-- Logs contain details of system configuration
-- Configuration files should be protected (chmod 600)
+## 🔐 Security Considerations
 
-## Contributing
+- Requires root — protect accordingly  
+- Backups/configs may include sensitive data  
+- Logs detail system state  
 
-When contributing to this tool:
+---
 
-1. Test on multiple distributions
-2. Ensure backward compatibility
-3. Document new features
-4. Follow existing code style
-5. Add appropriate error handling
+## 🤝 Contributing
 
-## License
+- Test on all supported distros  
+- Maintain backward compatibility  
+- Follow existing style & add tests  
+- Document every change  
 
-[Specify your license here]
+---
 
-## Support
+## 📜 License
 
-For issues, questions, or contributions:
-- GitHub: [your-repo-url]
-- Email: [your-email]
-- Documentation: [docs-url]
+MIT - License
 
-## Changelog
+---
 
-### Version 2.1.0 Stable
-- Initial release
-- Support for RHEL/CentOS/Debian/Ubuntu
-- Eight security modules
-- Backup and rollback functionality
-- Comprehensive reporting
-- Dry-run and impact analysis
+## 📌 Changelog
+
+**v2.1.0 – Stable**  
+- Initial release  
+- Support for RHEL/CentOS/Debian/Ubuntu  
+- Eight security modules  
+- Backup & rollback  
+- Full audit reporting  
+- Dry-run & impact analysis  
+
+---
