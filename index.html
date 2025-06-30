@@ -626,9 +626,11 @@
             font-size: 0.9rem;
         }
         
-        .demo-btn:hover, .demo-btn.active {
+        .demo-btn:hover {
             background: var(--primary);
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
         }
         
         .demo-content {
@@ -847,7 +849,18 @@
             .nav-links {
                 display: none;
             }
-            
+
+            .command-categories {
+                grid-template-columns: 1fr;
+            }
+        
+            .command-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        
+            .demo-tips {
+                grid-template-columns: 1fr;
+            }            
             .mobile-menu {
                 display: block;
             }
@@ -1097,63 +1110,89 @@
             </div>
         </div>
         
-        <div class="demo-commands">
-            <div class="command-categories">
-                <div class="category">
-                    <h3>Audit & Hardening</h3>
-                    <div class="command-buttons">
-                        <button class="demo-btn" data-command="kaktus --audit" title="Run security audit">
-                            <i class="fas fa-search"></i> Audit System
-                        </button>
-                        <button class="demo-btn" data-command="kaktus --dry-run" title="Preview changes">
-                            <i class="fas fa-eye"></i> Dry Run
-                        </button>
-                        <button class="demo-btn" data-command="kaktus" title="Apply hardening">
-                            <i class="fas fa-shield-alt"></i> Harden System
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="category">
-                    <h3>Module Operations</h3>
-                    <div class="command-buttons">
-                        <button class="demo-btn" data-command="kaktus --modules ssh,firewall" title="Harden SSH and firewall">
-                            <i class="fas fa-lock"></i> Secure SSH & FW
-                        </button>
-                        <button class="demo-btn" data-command="kaktus --modules kernel,services" title="Harden kernel and services">
-                            <i class="fas fa-cog"></i> Kernel & Services
-                        </button>
-                        <button class="demo-btn" data-command="kaktus --list-backups" title="List available backups">
-                            <i class="fas fa-history"></i> List Backups
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="category">
-                    <h3>Utilities</h3>
-                    <div class="command-buttons">
-                        <button class="demo-btn" data-command="clear" title="Clear terminal">
-                            <i class="fas fa-broom"></i> Clear
-                        </button>
-                        <button class="demo-btn" data-command="help" title="Show help">
-                            <i class="fas fa-question-circle"></i> Help
-                        </button>
-                    </div>
-                </div>
+<div class="demo-commands">
+    <div class="command-categories">
+        <!-- Audit & Hardening -->
+        <div class="category-card">
+            <div class="category-header">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Audit & Hardening</h3>
             </div>
-            
-            <div class="demo-tips">
-                <div class="tip-card">
-                    <i class="fas fa-lightbulb"></i>
-                    <p>Press <kbd>Tab</kbd> to autocomplete commands</p>
-                </div>
-                <div class="tip-card">
-                    <i class="fas fa-history"></i>
-                    <p>Use <kbd>↑</kbd> and <kbd>↓</kbd> to navigate command history</p>
-                </div>
+            <div class="command-buttons">
+                <button class="demo-btn" data-command="kaktus --audit" title="Run comprehensive security audit">
+                    <i class="fas fa-search"></i> System Audit
+                </button>
+                <button class="demo-btn" data-command="kaktus --dry-run" title="Preview changes without applying">
+                    <i class="fas fa-eye"></i> Dry Run
+                </button>
+                <button class="demo-btn" data-command="kaktus" title="Apply all hardening measures">
+                    <i class="fas fa-lock"></i> Full Hardening
+                </button>
+            </div>
+        </div>
+
+        <!-- Module Operations -->
+        <div class="category-card">
+            <div class="category-header">
+                <i class="fas fa-cubes"></i>
+                <h3>Module Operations</h3>
+            </div>
+            <div class="command-buttons">
+                <button class="demo-btn" data-command="kaktus --modules ssh,firewall" title="Harden SSH and firewall configurations">
+                    <i class="fas fa-lock"></i> SSH & Firewall
+                </button>
+                <button class="demo-btn" data-command="kaktus --modules kernel,services" title="Harden kernel parameters and services">
+                    <i class="fas fa-cog"></i> Kernel & Services
+                </button>
+                <button class="demo-btn" data-command="kaktus --list-backups" title="List available system backups">
+                    <i class="fas fa-history"></i> List Backups
+                </button>
+            </div>
+        </div>
+
+        <!-- Utilities -->
+        <div class="category-card">
+            <div class="category-header">
+                <i class="fas fa-tools"></i>
+                <h3>Utilities</h3>
+            </div>
+            <div class="command-buttons">
+                <button class="demo-btn" data-command="clear" title="Clear terminal output">
+                    <i class="fas fa-broom"></i> Clear
+                </button>
+                <button class="demo-btn" data-command="help" title="Show available commands">
+                    <i class="fas fa-question-circle"></i> Help
+                </button>
+                <button class="demo-btn" id="reset-demo" title="Reset demo terminal">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
             </div>
         </div>
     </div>
+
+    <!-- Demo Tips -->
+    <div class="demo-tips">
+        <div class="tip-card">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>Pro Tip:</strong> Press <kbd>Tab</kbd> to autocomplete commands
+            </div>
+        </div>
+        <div class="tip-card">
+            <i class="fas fa-keyboard"></i>
+            <div>
+                <strong>Shortcut:</strong> <kbd>↑</kbd> <kbd>↓</kbd> to navigate history
+            </div>
+        </div>
+        <div class="tip-card">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>Note:</strong> This is a simulation - no real commands are executed
+            </div>
+        </div>
+    </div>
+</div>
+
 </section>
 
 <style>
@@ -1259,10 +1298,44 @@
     .command-categories {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
+        gap: 1.5rem;
         margin-bottom: 2rem;
     }
     
+    .category-card {
+        background: rgba(15, 25, 40, 0.6);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(42, 157, 143, 0.2);
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(42, 157, 143, 0.2);
+    }
+
+    .category-header i {
+        font-size: 1.4rem;
+        color: var(--accent);
+        background: rgba(233, 196, 106, 0.1);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .category-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: var(--light);
+        font-weight: 600;
+    }
+
     .command-categories h3 {
         color: var(--accent);
         margin-bottom: 1rem;
@@ -1277,23 +1350,25 @@
     }
     
     .command-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.8rem;
     }
     
     .demo-btn {
-        padding: 0.6rem 1.2rem;
-        background: var(--glass);
-        border: 1px solid var(--primary);
-        border-radius: 6px;
+        padding: 0.7rem 1rem;
+        background: rgba(42, 157, 143, 0.1);
+        border: 1px solid rgba(42, 157, 143, 0.3);
+        border-radius: 8px;
         color: var(--primary);
         cursor: pointer;
         transition: all 0.3s;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         display: flex;
         align-items: center;
         gap: 8px;
+        justify-content: center;
+        text-align: left;
     }
     
     .demo-btn:hover {
@@ -1305,6 +1380,7 @@
     
     .demo-btn i {
         font-size: 0.8rem;
+        flex-shrink: 0;
     }
     
     /* Demo Tips */
@@ -1317,10 +1393,10 @@
     }
     
     .tip-card {
-        background: rgba(42, 157, 143, 0.1);
-        border: 1px solid rgba(42, 157, 143, 0.3);
+        background: rgba(42, 157, 143, 0.08);
+        border: 1px dashed rgba(42, 157, 143, 0.3);
         border-radius: 8px;
-        padding: 1rem 1.5rem;
+        padding: 1rem;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -1330,14 +1406,21 @@
     .tip-card i {
         color: var(--accent);
         font-size: 1.2rem;
+        flex-shrink: 0;
     }
     
+    .tip-card strong {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
     .tip-card kbd {
         background: rgba(0, 0, 0, 0.3);
         padding: 0.2rem 0.4rem;
         border-radius: 4px;
         font-family: monospace;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        margin: 0 2px;
     }
 </style>
 
