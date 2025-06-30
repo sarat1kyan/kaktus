@@ -1,0 +1,178 @@
+# Enhanced Linux System Hardening Tool v2.0 - Requirements
+# Python 3.8+ required for async/await features and modern type hints
+
+# Core Dependencies
+# ================
+
+# System Information and Process Management
+psutil>=5.9.0                    # System and process utilities
+netifaces>=0.11.0               # Network interface information
+
+# Async and File Operations
+aiofiles>=23.1.0                # Async file operations
+asyncio-timeout>=4.0.2          # Async timeout utilities (Python <3.11)
+
+# Data Serialization and Configuration
+PyYAML>=6.0                     # YAML configuration file support
+toml>=0.10.2                    # TOML configuration support (alternative)
+
+# HTTP Client for Updates and Reporting
+requests>=2.31.0                # HTTP library for external API calls
+urllib3>=2.0.0                  # HTTP client (requests dependency)
+
+# Database and Data Processing
+# =============================
+
+# No external database dependencies - using built-in sqlite3
+
+# Security and Cryptography
+# ==========================
+cryptography>=41.0.0            # Cryptographic operations and validation
+paramiko>=3.2.0                 # SSH protocol implementation (for remote operations)
+
+# Optional: Enhanced Security Features
+# ====================================
+
+# Password strength validation
+zxcvbn>=4.4.28                  # Password strength estimation (optional)
+
+# Network security scanning
+python-nmap>=0.7.1              # Network mapper integration (optional)
+
+# Advanced reporting
+Jinja2>=3.1.2                   # Template engine for advanced HTML reports
+MarkupSafe>=2.1.3              # Jinja2 dependency for safe string handling
+
+# Data visualization for reports
+matplotlib>=3.7.0               # Plotting library for trend charts (optional)
+plotly>=5.15.0                  # Interactive plotting for web reports (optional)
+
+# Development and Testing Dependencies
+# ===================================
+
+# Code quality and testing (development only)
+pytest>=7.4.0                  # Testing framework
+pytest-asyncio>=0.21.0         # Async testing support
+pytest-cov>=4.1.0              # Coverage reporting
+black>=23.7.0                  # Code formatting
+flake8>=6.0.0                  # Linting
+mypy>=1.5.0                    # Type checking
+bandit>=1.7.5                  # Security linting
+
+# Documentation
+sphinx>=7.1.0                  # Documentation generation
+sphinx-rtd-theme>=1.3.0        # Read the Docs theme
+
+# Performance and Monitoring
+# ===========================
+
+# Memory profiling and performance monitoring (optional)
+memory-profiler>=0.61.0        # Memory usage profiling
+line-profiler>=4.1.0           # Line-by-line profiling
+
+# Logging and structured data
+structlog>=23.1.0               # Structured logging (optional enhancement)
+
+# System Integration
+# ==================
+
+# Service management and systemd integration
+systemd-python>=235             # Systemd integration (Linux only, optional)
+
+# Package management integration
+python-apt>=2.4.0              # APT package manager (Debian/Ubuntu, optional)
+rpm-python>=4.16.0             # RPM package manager (RHEL/CentOS, optional)
+
+# Cloud and Container Integration (Optional)
+# ==========================================
+
+# Docker integration for container hardening
+docker>=6.1.0                  # Docker API client (optional)
+
+# AWS integration for cloud security
+boto3>=1.28.0                  # AWS SDK (optional)
+botocore>=1.31.0              # AWS core library
+
+# Azure integration
+azure-identity>=1.14.0         # Azure authentication (optional)
+azure-mgmt-compute>=30.1.0     # Azure compute management (optional)
+
+# Google Cloud integration
+google-cloud-compute>=1.14.0   # GCP compute engine (optional)
+
+# Kubernetes integration
+kubernetes>=27.2.0             # Kubernetes API client (optional)
+
+# Platform-Specific Dependencies
+# ==============================
+
+# Linux-specific packages (automatically installed on Linux)
+python-systemd>=234; sys_platform == "linux"     # Systemd journal integration
+PyGObject>=3.44.0; sys_platform == "linux"       # GObject introspection (optional)
+
+# Windows compatibility (for cross-platform development)
+pywin32>=306; sys_platform == "win32"             # Windows API access
+wmi>=1.5.1; sys_platform == "win32"               # Windows Management Instrumentation
+
+# macOS compatibility
+pyobjc>=9.2; sys_platform == "darwin"             # macOS system integration
+
+# Compliance and Standards
+# ========================
+
+# SCAP (Security Content Automation Protocol) support
+openscap-python>=1.3.7         # OpenSCAP integration (optional)
+
+# OVAL (Open Vulnerability Assessment Language)
+# Note: No direct Python bindings, using subprocess calls
+
+# Version Constraints and Compatibility
+# =====================================
+
+# Ensure compatibility with Python 3.8+
+dataclasses>=0.6; python_version < "3.7"          # Backport for older Python
+typing-extensions>=4.7.0; python_version < "3.9"  # Enhanced type hints
+
+# Security Updates and CVE Fixes
+# ==============================
+
+# Ensure we have patched versions of security-sensitive packages
+certifi>=2023.7.22             # Updated CA certificates
+setuptools>=68.0.0             # Security fixes in setuptools
+pip>=23.2.0                    # Latest pip with security fixes
+
+# Optional Performance Enhancements
+# ==================================
+
+# Fast JSON processing
+orjson>=3.9.0                  # Fast JSON library (optional, C extension)
+ujson>=5.8.0                   # Ultra-fast JSON (alternative to orjson)
+
+# Fast YAML processing
+ruamel.yaml>=0.17.32           # Fast YAML parser (alternative to PyYAML)
+
+# Parallel processing enhancements
+multiprocessing-logging>=0.3.4  # Safe logging in multiprocessing
+
+# Memory optimization
+pympler>=0.9                    # Memory profiling and optimization
+
+# Network performance
+httpx>=0.24.0                   # Modern async HTTP client (alternative to requests)
+trio>=0.22.0                    # Async networking library
+
+# Minimum Version Notes:
+# =====================
+# Python 3.8+: Required for async/await, walrus operator, positional-only parameters
+# psutil 5.9.0+: Contains important security fixes and Linux compatibility
+# PyYAML 6.0+: Safe loading by default, security improvements
+# requests 2.31.0+: Security fixes for CVE-2023-32681
+# cryptography 41.0.0+: Latest security patches and algorithm support
+
+# Installation Notes:
+# ==================
+# Some packages may require system-level dependencies:
+# - Debian/Ubuntu: apt-get install python3-dev libssl-dev libffi-dev
+# - RHEL/CentOS: yum install python3-devel openssl-devel libffi-devel
+# - Alpine: apk add python3-dev openssl-dev libffi-dev build-base
+# - Arch: pacman -S python-pip gcc openssl libffi
