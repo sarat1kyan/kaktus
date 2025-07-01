@@ -943,7 +943,7 @@ Full license attributions available in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LIC
 - 🐳 **Container Guide:** [https://github.com/sarat1kyan/kaktus/docs/containers](https://github.com/sarat1kyan/kaktus/docs/containers)
 
 **Learning Resources:**
-- 🎓 **Security Blog:** [https://kaktusforlinux.netlify.app/](https://kaktusforlinux.netlify.app/)
+- 🎓 **Security Blog:** [https://kaktusing.com/](https://kaktusing.com/)
 - 📺 **Video Tutorials:** Coming soon!
 - 📊 **Case Studies:** Real-world implementation examples
 - 🔬 **Research Papers:** Academic publications and whitepapers
