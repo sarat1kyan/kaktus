@@ -1,4 +1,4 @@
-# 🌵 Kaktus - Enhanced Linux System Hardening Tool v2.0
+# 🌵 Kaktus - Enhanced Linux System Auditing and Hardening Tool v2.0
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -11,6 +11,12 @@
 > **🛡️ Enterprise-grade Linux security hardening and compliance assessment tool with automated remediation capabilities**
 
 **Kaktus** is a comprehensive, enterprise-ready security automation platform designed to assess, harden, and maintain the security posture of Linux systems. Built with modern Python asyncio architecture, it provides parallel execution, intelligent risk assessment, and compliance mapping across multiple security frameworks.
+
+---
+
+
+https://github.com/user-attachments/assets/db82768c-4f39-43b2-ae00-929ab9a8a5bb
+
 
 ---
 
@@ -943,7 +949,7 @@ Full license attributions available in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LIC
 - 🐳 **Container Guide:** [https://github.com/sarat1kyan/kaktus/docs/containers](https://github.com/sarat1kyan/kaktus/docs/containers)
 
 **Learning Resources:**
-- 🎓 **Security Blog:** [https://kaktusforlinux.netlify.app/](https://kaktusforlinux.netlify.app/)
+- 🎓 **Security Blog:** [https://kaktusing.com/](https://kaktusing.com/)
 - 📺 **Video Tutorials:** Coming soon!
 - 📊 **Case Studies:** Real-world implementation examples
 - 🔬 **Research Papers:** Academic publications and whitepapers
