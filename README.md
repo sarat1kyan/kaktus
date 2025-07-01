@@ -14,9 +14,12 @@
 
 ---
 
+<div align="center">
 
-https://github.com/user-attachments/assets/db82768c-4f39-43b2-ae00-929ab9a8a5bb
 
+![507252dcc96bfc](https://github.com/user-attachments/assets/9e5e1336-76c1-45db-aec6-72ef4682f90c)
+
+</div>
 
 ---
 
