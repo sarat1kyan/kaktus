@@ -14,6 +14,12 @@
 
 ---
 
+
+https://github.com/user-attachments/assets/db82768c-4f39-43b2-ae00-929ab9a8a5bb
+
+
+---
+
 ## 🌟 Why Kaktus?
 
 Named after the resilient cactus plant, **Kaktus** represents robust defense mechanisms that protect your Linux systems against security threats. Just as a cactus thrives in harsh environments with its natural armor, Kaktus fortifies your servers with multiple layers of security controls.
