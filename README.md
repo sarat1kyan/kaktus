@@ -6,7 +6,7 @@
 [![Compliance](https://img.shields.io/badge/compliance-CIS%20%7C%20ISO27001%20%7C%20NIST%20%7C%20STIG%20%7C%20PCI--DSS-green.svg)](https://github.com/sarat1kyan/kaktus)
 [![Build Status](https://img.shields.io/badge/build-Stable%20%7C%20212033-brightgreen.svg)](https://github.com/sarat1kyan/kaktus)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![OS](https://img.shields.io/badge/os-linux-blue.svg)](https://www.python.org/downloads/)
+[![OS](https://img.shields.io/badge/os-Linux-blue.svg)](https://www.python.org/downloads/)
 
 
 > **🛡️ Enterprise-grade Linux security hardening and compliance assessment tool with automated remediation capabilities**
