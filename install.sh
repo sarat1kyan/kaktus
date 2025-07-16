@@ -22,7 +22,7 @@ set -euo pipefail  # Exit on error, undefined variables, pipe failures
 
 readonly TOOL_NAME="Enhanced Linux Hardening Tool"
 readonly TOOL_VERSION="2.0.0"
-readonly TOOL_REPO="https://github.com/yourusername/enhanced-linux-hardening-tool"
+readonly TOOL_REPO="https://github.com/sarat1kyan/kaktus"
 readonly INSTALL_DIR="/opt/kaktus"
 readonly BIN_DIR="/usr/local/bin"
 readonly CONFIG_DIR="/etc/kaktus"
@@ -413,9 +413,9 @@ install_hardening_tool() {
     print_status "Installing Enhanced Linux Hardening Tool..."
     
     # If we're in the source directory, copy files
-    if [[ -f "enhanced_hardening_tool.py" ]]; then
+    if [[ -f "kaktus.py" ]]; then
         print_status "Installing from local source..."
-        cp enhanced_hardening_tool.py "$INSTALL_DIR/"
+        cp kaktus.py "$INSTALL_DIR/"
         [[ -f "requirements.txt" ]] && cp requirements.txt "$INSTALL_DIR/"
         [[ -f "README.md" ]] && cp README.md "$INSTALL_DIR/"
         [[ -f "LICENSE" ]] && cp LICENSE "$INSTALL_DIR/"
@@ -448,7 +448,7 @@ install_hardening_tool() {
     fi
     
     # Make main script executable
-    chmod +x "$INSTALL_DIR/enhanced_hardening_tool.py"
+    chmod +x "$INSTALL_DIR/kaktus.py"
     
     print_success "Tool files installed successfully"
 }
@@ -535,7 +535,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=$INSTALL_DIR/enhanced_hardening_tool.py --audit --config $CONFIG_DIR/config.yaml
+ExecStart=$INSTALL_DIR/kaktus.py --audit --config $CONFIG_DIR/config.yaml
 User=root
 Group=root
 WorkingDirectory=$INSTALL_DIR
@@ -696,7 +696,7 @@ EOF
 create_symlink() {
     if [[ "$CREATE_SYMLINK" == "true" ]]; then
         print_status "Creating symbolic link..."
-        ln -sf "$INSTALL_DIR/enhanced_hardening_tool.py" "$BIN_DIR/kaktus"
+        ln -sf "$INSTALL_DIR/kaktus.py" "$BIN_DIR/kaktus"
         chmod +x "$BIN_DIR/kaktus"
         print_success "Symbolic link created: $BIN_DIR/kaktus"
     fi
@@ -735,9 +735,9 @@ post_install_setup() {
     fi
     
     # Create initial backup point
-    if command_exists "$INSTALL_DIR/enhanced_hardening_tool.py"; then
+    if command_exists "$INSTALL_DIR/kaktus.py"; then
         print_status "Creating initial system backup..."
-        "$INSTALL_DIR/enhanced_hardening_tool.py" --dry-run --status >/dev/null 2>&1 || true
+        "$INSTALL_DIR/kaktus.py" --dry-run --status >/dev/null 2>&1 || true
     fi
     
     # Update system package databases
@@ -769,7 +769,7 @@ verify_installation() {
     local errors=0
     
     # Check if main script exists and is executable
-    if [[ ! -x "$INSTALL_DIR/enhanced_hardening_tool.py" ]]; then
+    if [[ ! -x "$INSTALL_DIR/kaktus.py" ]]; then
         print_error "Main script is not executable"
         ((errors++))
     fi
@@ -796,8 +796,8 @@ verify_installation() {
     done
     
     # Test basic functionality
-    if command_exists "$INSTALL_DIR/enhanced_hardening_tool.py"; then
-        if ! "$INSTALL_DIR/enhanced_hardening_tool.py" --version >/dev/null 2>&1; then
+    if command_exists "$INSTALL_DIR/kaktus.py"; then
+        if ! "$INSTALL_DIR/kaktus.py" --version >/dev/null 2>&1; then
             print_error "Tool does not execute properly"
             ((errors++))
         fi
@@ -823,9 +823,9 @@ show_installation_summary() {
     echo -e "${WHITE}Installation Type:${NC} $INSTALL_TYPE"
     
     if [[ "$CREATE_SYMLINK" == "true" ]]; then
-        echo -e "${WHITE}Command:${NC} linux-hardening-tool (or $INSTALL_DIR/enhanced_hardening_tool.py)"
+        echo -e "${WHITE}Command:${NC} linux-hardening-tool (or $INSTALL_DIR/kaktus.py)"
     else
-        echo -e "${WHITE}Command:${NC} $INSTALL_DIR/enhanced_hardening_tool.py"
+        echo -e "${WHITE}Command:${NC} $INSTALL_DIR/kaktus.py"
     fi
     
     echo
