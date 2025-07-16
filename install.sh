@@ -527,7 +527,7 @@ EOF
 
     # Create systemd service file
     if [[ "$ENABLE_SERVICE" == "true" ]] && command_exists systemctl; then
-        cat > "$SERVICE_DIR/linux-hardening.service" << EOF
+        cat > "$SERVICE_DIR/kaktus.service" << EOF
 [Unit]
 Description=Enhanced Linux System Hardening Tool
 Documentation=$TOOL_REPO
@@ -547,10 +547,10 @@ WantedBy=multi-user.target
 EOF
 
         # Create timer for scheduled runs
-        cat > "$SERVICE_DIR/linux-hardening.timer" << 'EOF'
+        cat > "$SERVICE_DIR/kaktus.timer" << 'EOF'
 [Unit]
 Description=Run Linux Hardening Tool weekly
-Requires=linux-hardening.service
+Requires=kaktus.service
 
 [Timer]
 OnCalendar=weekly
@@ -729,8 +729,8 @@ post_install_setup() {
     
     # Enable and start services if requested
     if [[ "$ENABLE_SERVICE" == "true" ]] && command_exists systemctl; then
-        systemctl enable linux-hardening.timer
-        systemctl start linux-hardening.timer
+        systemctl enable kaktus.timer
+        systemctl start kaktus.timer
         print_success "Scheduled hardening enabled (weekly)"
     fi
     
@@ -823,7 +823,7 @@ show_installation_summary() {
     echo -e "${WHITE}Installation Type:${NC} $INSTALL_TYPE"
     
     if [[ "$CREATE_SYMLINK" == "true" ]]; then
-        echo -e "${WHITE}Command:${NC} linux-hardening-tool (or $INSTALL_DIR/kaktus.py)"
+        echo -e "${WHITE}Command:${NC} kaktus (or $INSTALL_DIR/kaktus.py)"
     else
         echo -e "${WHITE}Command:${NC} $INSTALL_DIR/kaktus.py"
     fi
@@ -831,14 +831,14 @@ show_installation_summary() {
     echo
     echo -e "${CYAN}Quick Start:${NC}"
     echo "  # Show system status"
-    echo "  sudo linux-hardening-tool --status"
+    echo "  sudo kaktus --status"
     echo
     echo "  # Run security audit"
-    echo "  sudo linux-hardening-tool --audit --compliance cis"
+    echo "  sudo kaktus --audit --compliance cis"
     echo
     echo "  # Perform hardening (dry run first)"
-    echo "  sudo linux-hardening-tool --dry-run"
-    echo "  sudo linux-hardening-tool --harden --profile server"
+    echo "  sudo kaktus --dry-run"
+    echo "  sudo kaktus --harden --profile server"
     echo
     echo -e "${CYAN}Configuration:${NC}"
     echo "  Main config: $CONFIG_DIR/config.yaml"
@@ -852,8 +852,8 @@ show_installation_summary() {
     
     if [[ "$ENABLE_SERVICE" == "true" ]] && command_exists systemctl; then
         echo -e "${CYAN}Scheduled Hardening:${NC}"
-        echo "  Service: systemctl status linux-hardening.timer"
-        echo "  Logs: journalctl -u linux-hardening.service"
+        echo "  Service: systemctl status kaktus.timer"
+        echo "  Logs: journalctl -u kaktus.service"
         echo
     fi
     
